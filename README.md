@@ -33,10 +33,11 @@ npm install git+https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail.
 ```bash
 docker update --restart=no nodebb
 
-docker exec -it nodebb sh -lc 'cd /usr/src/app && npm uninstall nodebb-plugin-peipe-partners || true && npm cache clean --force && npm install --legacy-peer-deps --force https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail/archive/refs/heads/main.tar.gz && ./nodebb build'
+docker exec -it nodebb sh -lc 'cd /usr/src/app && npm install --legacy-peer-deps --force https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail/archive/refs/heads/main.tar.gz && ./nodebb build'
 
 docker restart nodebb
 
 docker update --restart=always nodebb
+对吗
 ```
 
