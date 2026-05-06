@@ -1,0 +1,27 @@
+{
+  "id": "nodebb-plugin-peipe-topic-detail",
+  "name": "Peipe Topic Detail UI",
+  "description": "Mobile topic detail UI, reply composer, media/voice player, translation tools, floor navigator, and multilingual support for NodeBB.",
+  "url": "https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail",
+  "library": "./library.js",
+  "staticDirs": {
+    "public": "public"
+  },
+  "scss": [
+    "public/scss/style.scss"
+  ],
+  "scripts": [
+    "public/src/client.js"
+  ],
+  "languages": "languages",
+  "hooks": [
+    {
+      "hook": "static:app.load",
+      "method": "init"
+    },
+    {
+      "hook": "filter:config.get",
+      "method": "filterConfig"
+    }
+  ]
+}
