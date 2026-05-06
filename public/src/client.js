@@ -1,5 +1,5 @@
 /* =========================================
-   NodeBB Topic Detail UI v12.0
+   Peipe Topic Detail UI v13.3
    修复点：
    - 手机端极限紧凑间距 / 清理隐藏媒体占位
    - AI 设置贴原生工具栏，不额外生成“翻译工具”行
@@ -14,7 +14,116 @@
 
   if (!$) return;
 
-  const VERSION = '12.0.0';
+
+  const PLUGIN_ID = 'peipe-topic-detail';
+  const PROFILE_CACHE_MS = 24 * 60 * 60 * 1000;
+
+  const I18N = {
+    'zh-CN': {
+      user: '用户', translate: '翻译', translating: '翻译中', original: '查看原文', aiSettings: 'AI翻译设置', aiTranslate: 'AI翻译',
+      sourceLangTitle: '选择原文语言', targetLangTitle: '选择目标语言', chooseLang: '选择语言', googleTranslate: '谷歌翻译', aiProvider: 'AI翻译',
+      replyPlaceholder: '友善回复...', openReply: '打开回复框', reply: '回复', quote: '引用', quotePost: '引用这条帖子', quoteContent: '引用内容',
+      clearQuote: '清除引用', uploadMedia: '上传图片或视频', record: '录音', translateInput: '翻译输入内容', send: '发送', sending: '发送中...',
+      pageJump: '楼层跳转', currentFloor: '当前楼层', dragFloor: '拖动楼层', useCurrentFloor: '使用当前楼层', cancel: '取消', go: '跳转', close: '关闭',
+      imagePreview: '图片预览', videoPreview: '视频预览', zoomImage: '放大图片', settingsSaved: '翻译设置已保存到本地',
+      titleTranslateFail: '标题翻译失败', postTranslateFail: '帖子翻译失败', inputTranslateFail: '输入内容翻译失败',
+      emptyReply: '请输入内容或添加媒体', micUnsupported: '当前浏览器不支持录音', micDenied: '麦克风权限未开启', fileProcessing: '处理文件中...',
+      imageReady: '图片已准备上传', imageCompressed: '图片已压缩并准备上传', videoReady: '视频已准备上传', videoCompressed: '视频已压缩并准备上传',
+      onlyImageVideo: '目前只支持图片或视频', uploadNoUrl: '上传成功但未返回文件地址', sendSuccess: '发送成功', sendFail: '发送失败', duplicateReply: '刚刚已经发送过这条内容，请不要重复提交',
+      voiceReady: '录音已压缩为 16kbps，可试听后发送', recording: '录音中', voiceMessage: '语音消息', image: '图片', video: '视频', justNow: '刚刚',
+      yearsAgo: '年前', monthsAgo: '个月前', weeksAgo: '周前', daysAgo: '天前', hoursAgo: '小时前', minutesAgo: '分钟前',
+      viewUserTopics: '查看用户主题', viewUserTopicsOf: '查看 {username} 的主题', apiEndpoint: 'AI 接口', model: '模型', apiKey: '密钥', prompt: '提示词',
+      promptPlaceholder: '支持 {{sourceLang}} 和 {{targetLang}} 占位符', settingsTip: '点击“原文”或“目标”才会展开语言选择', source: '原文', target: '目标',
+      defaultPrompt: '你是专业论坛翻译助手。请把用户提供的内容从 {{sourceLang}} 翻译为 {{targetLang}}。保留原有语气、换行、链接、Markdown、代码块、用户名、表情和列表结构。只输出译文，不要解释。',
+      lightboxExit: '点击底部退出', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok 视频加载失败，点此重试'
+    },
+    'en-GB': {
+      user: 'User', translate: 'Translate', translating: 'Translating', original: 'Show original', aiSettings: 'AI translation settings', aiTranslate: 'AI translate',
+      sourceLangTitle: 'Choose source language', targetLangTitle: 'Choose target language', chooseLang: 'Choose language', googleTranslate: 'Google Translate', aiProvider: 'AI Translate',
+      replyPlaceholder: 'Write a friendly reply...', openReply: 'Open reply box', reply: 'Reply', quote: 'Quote', quotePost: 'Quote this post', quoteContent: 'Quoted content',
+      clearQuote: 'Clear quote', uploadMedia: 'Upload image or video', record: 'Record', translateInput: 'Translate input', send: 'Send', sending: 'Sending...',
+      pageJump: 'Jump to floor', currentFloor: 'Current floor', dragFloor: 'Drag to floor', useCurrentFloor: 'Use current floor', cancel: 'Cancel', go: 'Go', close: 'Close',
+      imagePreview: 'Image preview', videoPreview: 'Video preview', zoomImage: 'Zoom image', settingsSaved: 'Translation settings saved locally',
+      titleTranslateFail: 'Title translation failed', postTranslateFail: 'Post translation failed', inputTranslateFail: 'Input translation failed',
+      emptyReply: 'Please enter content or add media', micUnsupported: 'Recording is not supported in this browser', micDenied: 'Microphone permission is not enabled', fileProcessing: 'Processing file...',
+      imageReady: 'Image is ready to upload', imageCompressed: 'Image compressed and ready to upload', videoReady: 'Video is ready to upload', videoCompressed: 'Video compressed and ready to upload',
+      onlyImageVideo: 'Only images or videos are supported', uploadNoUrl: 'Upload succeeded but no file URL was returned', sendSuccess: 'Sent', sendFail: 'Send failed', duplicateReply: 'This content was just sent. Please do not submit it again.',
+      voiceReady: 'Voice was compressed to 16kbps. You can listen before sending', recording: 'Recording', voiceMessage: 'Voice message', image: 'Image', video: 'Video', justNow: 'just now',
+      yearsAgo: 'y ago', monthsAgo: 'mo ago', weeksAgo: 'w ago', daysAgo: 'd ago', hoursAgo: 'h ago', minutesAgo: 'm ago',
+      viewUserTopics: 'View user topics', viewUserTopicsOf: "View {username}'s topics", apiEndpoint: 'AI endpoint', model: 'Model', apiKey: 'API key', prompt: 'Prompt',
+      promptPlaceholder: 'Supports {{sourceLang}} and {{targetLang}} placeholders', settingsTip: 'Tap source or target to choose language', source: 'Source', target: 'Target',
+      defaultPrompt: 'You are a professional forum translation assistant. Translate the user content from {{sourceLang}} to {{targetLang}}. Preserve tone, line breaks, links, Markdown, code blocks, usernames, emojis, and lists. Output only the translation without explanation.',
+      lightboxExit: 'Tap bottom to exit', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok video failed to load. Tap to retry'
+    },
+    'my-MM': {
+      user: 'အသုံးပြုသူ', translate: 'ဘာသာပြန်', translating: 'ဘာသာပြန်နေသည်', original: 'မူရင်းကြည့်ရန်', aiSettings: 'AI ဘာသာပြန် ဆက်တင်', aiTranslate: 'AI ဘာသာပြန်',
+      sourceLangTitle: 'မူရင်းဘာသာစကား ရွေးပါ', targetLangTitle: 'ဦးတည်ဘာသာစကား ရွေးပါ', chooseLang: 'ဘာသာစကား ရွေးပါ', googleTranslate: 'Google ဘာသာပြန်', aiProvider: 'AI ဘာသာပြန်',
+      replyPlaceholder: 'ယဉ်ကျေးစွာ ပြန်စာရေးပါ...', openReply: 'ပြန်စာဖွင့်', reply: 'ပြန်စာ', quote: 'ကိုးကား', quotePost: 'ဤပို့စ်ကို ကိုးကား', quoteContent: 'ကိုးကားထားသော အကြောင်းအရာ',
+      clearQuote: 'ကိုးကားချက်ဖျက်', uploadMedia: 'ပုံ/ဗီဒီယို တင်ရန်', record: 'အသံဖမ်း', translateInput: 'စာသားဘာသာပြန်', send: 'ပို့မည်', sending: 'ပို့နေသည်...',
+      pageJump: 'အထပ်သို့ ခုန်ရန်', currentFloor: 'လက်ရှိအထပ်', dragFloor: 'အထပ်ရွှေ့ရန် ဆွဲပါ', useCurrentFloor: 'လက်ရှိအထပ် သုံးရန်', cancel: 'မလုပ်တော့', go: 'သွားမည်', close: 'ပိတ်',
+      imagePreview: 'ပုံအစမ်း', videoPreview: 'ဗီဒီယိုအစမ်း', zoomImage: 'ပုံကြီးကြည့်', settingsSaved: 'ဘာသာပြန်ဆက်တင် သိမ်းပြီးပါပြီ',
+      titleTranslateFail: 'ခေါင်းစဉ် ဘာသာပြန် မအောင်မြင်', postTranslateFail: 'ပို့စ် ဘာသာပြန် မအောင်မြင်', inputTranslateFail: 'စာသား ဘာသာပြန် မအောင်မြင်',
+      emptyReply: 'စာသားရေးပါ သို့မဟုတ် မီဒီယာထည့်ပါ', micUnsupported: 'ဤ browser သည် အသံဖမ်း မထောက်ပံ့ပါ', micDenied: 'မိုက်ခရိုဖုန်းခွင့်ပြုချက် မဖွင့်ထားပါ', fileProcessing: 'ဖိုင်လုပ်ဆောင်နေသည်...',
+      imageReady: 'ပုံတင်ရန် အသင့်', imageCompressed: 'ပုံချုံ့ပြီး တင်ရန် အသင့်', videoReady: 'ဗီဒီယိုတင်ရန် အသင့်', videoCompressed: 'ဗီဒီယိုချုံ့ပြီး တင်ရန် အသင့်',
+      onlyImageVideo: 'ပုံ သို့မဟုတ် ဗီဒီယိုသာ ထောက်ပံ့သည်', uploadNoUrl: 'တင်ပြီးသော်လည်း ဖိုင်လိပ်စာမရပါ', sendSuccess: 'ပို့ပြီးပါပြီ', sendFail: 'ပို့ရန် မအောင်မြင်', duplicateReply: 'ဤအကြောင်းအရာကို မကြာသေးမီက ပို့ပြီးပါပြီ',
+      voiceReady: 'အသံကို 16kbps ဖြင့်ချုံ့ပြီးပါပြီ။ ပို့မီ နားထောင်နိုင်သည်', recording: 'အသံဖမ်းနေသည်', voiceMessage: 'အသံမက်ဆေ့ချ်', image: 'ပုံ', video: 'ဗီဒီယို', justNow: 'ယခုပဲ',
+      yearsAgo: 'နှစ်ခန့်က', monthsAgo: 'လခန့်က', weeksAgo: 'ပတ်ခန့်က', daysAgo: 'ရက်ခန့်က', hoursAgo: 'နာရီခန့်က', minutesAgo: 'မိနစ်ခန့်က',
+      viewUserTopics: 'အသုံးပြုသူ၏ ခေါင်းစဉ်များ', viewUserTopicsOf: '{username} ၏ ခေါင်းစဉ်များ', apiEndpoint: 'AI endpoint', model: 'မော်ဒယ်', apiKey: 'API key', prompt: 'Prompt',
+      promptPlaceholder: '{{sourceLang}} နှင့် {{targetLang}} placeholder ကိုထောက်ပံ့သည်', settingsTip: 'မူရင်း သို့မဟုတ် ဦးတည်ကိုနှိပ်၍ ဘာသာစကားရွေးပါ', source: 'မူရင်း', target: 'ဦးတည်',
+      defaultPrompt: 'သင်သည် ဖိုရမ်ဘာသာပြန် အကူအညီပေးသူဖြစ်သည်။ အကြောင်းအရာကို {{sourceLang}} မှ {{targetLang}} သို့ ဘာသာပြန်ပါ။ လေသံ၊ စာကြောင်းခွဲ၊ link၊ Markdown၊ code block၊ username၊ emoji နှင့် list များကို ထိန်းသိမ်းပါ။ ဘာသာပြန်စာသားသာ ထုတ်ပါ။',
+      lightboxExit: 'အောက်ခြေကိုနှိပ်ပြီး ထွက်ရန်', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok ဗီဒီယို မဖွင့်နိုင်ပါ။ ပြန်စမ်းရန်နှိပ်ပါ'
+    },
+    vi: {
+      user: 'Người dùng', translate: 'Dịch', translating: 'Đang dịch', original: 'Xem bản gốc', aiSettings: 'Cài đặt dịch AI', aiTranslate: 'Dịch AI',
+      sourceLangTitle: 'Chọn ngôn ngữ nguồn', targetLangTitle: 'Chọn ngôn ngữ đích', chooseLang: 'Chọn ngôn ngữ', googleTranslate: 'Google Dịch', aiProvider: 'Dịch AI',
+      replyPlaceholder: 'Viết phản hồi thân thiện...', openReply: 'Mở khung trả lời', reply: 'Trả lời', quote: 'Trích dẫn', quotePost: 'Trích dẫn bài này', quoteContent: 'Nội dung trích dẫn',
+      clearQuote: 'Xóa trích dẫn', uploadMedia: 'Tải ảnh hoặc video', record: 'Ghi âm', translateInput: 'Dịch nội dung nhập', send: 'Gửi', sending: 'Đang gửi...',
+      pageJump: 'Nhảy tầng', currentFloor: 'Tầng hiện tại', dragFloor: 'Kéo để chọn tầng', useCurrentFloor: 'Dùng tầng hiện tại', cancel: 'Hủy', go: 'Đi', close: 'Đóng',
+      imagePreview: 'Xem trước ảnh', videoPreview: 'Xem trước video', zoomImage: 'Phóng to ảnh', settingsSaved: 'Đã lưu cài đặt dịch cục bộ',
+      titleTranslateFail: 'Dịch tiêu đề thất bại', postTranslateFail: 'Dịch bài viết thất bại', inputTranslateFail: 'Dịch nội dung nhập thất bại',
+      emptyReply: 'Vui lòng nhập nội dung hoặc thêm media', micUnsupported: 'Trình duyệt không hỗ trợ ghi âm', micDenied: 'Chưa bật quyền micro', fileProcessing: 'Đang xử lý tệp...',
+      imageReady: 'Ảnh đã sẵn sàng tải lên', imageCompressed: 'Ảnh đã nén và sẵn sàng tải lên', videoReady: 'Video đã sẵn sàng tải lên', videoCompressed: 'Video đã nén và sẵn sàng tải lên',
+      onlyImageVideo: 'Chỉ hỗ trợ ảnh hoặc video', uploadNoUrl: 'Tải lên thành công nhưng không trả về URL', sendSuccess: 'Đã gửi', sendFail: 'Gửi thất bại', duplicateReply: 'Nội dung này vừa được gửi. Vui lòng không gửi lại.',
+      voiceReady: 'Giọng nói đã nén 16kbps. Có thể nghe trước khi gửi', recording: 'Đang ghi âm', voiceMessage: 'Tin nhắn thoại', image: 'Ảnh', video: 'Video', justNow: 'vừa xong',
+      yearsAgo: 'năm trước', monthsAgo: 'tháng trước', weeksAgo: 'tuần trước', daysAgo: 'ngày trước', hoursAgo: 'giờ trước', minutesAgo: 'phút trước',
+      viewUserTopics: 'Xem chủ đề của người dùng', viewUserTopicsOf: 'Xem chủ đề của {username}', apiEndpoint: 'AI endpoint', model: 'Mô hình', apiKey: 'API key', prompt: 'Prompt',
+      promptPlaceholder: 'Hỗ trợ biến {{sourceLang}} và {{targetLang}}', settingsTip: 'Nhấn nguồn hoặc đích để chọn ngôn ngữ', source: 'Nguồn', target: 'Đích',
+      defaultPrompt: 'Bạn là trợ lý dịch diễn đàn chuyên nghiệp. Hãy dịch nội dung từ {{sourceLang}} sang {{targetLang}}. Giữ nguyên giọng điệu, xuống dòng, liên kết, Markdown, khối mã, tên người dùng, emoji và danh sách. Chỉ xuất bản dịch, không giải thích.',
+      lightboxExit: 'Nhấn phía dưới để thoát', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'Không tải được video TikTok. Nhấn để thử lại'
+    }
+  };
+
+  const ZH_MESSAGE_KEYS = {
+    '翻译设置已保存到本地': 'settingsSaved', '标题翻译失败': 'titleTranslateFail', '帖子翻译失败': 'postTranslateFail', '输入内容翻译失败': 'inputTranslateFail',
+    '请输入内容或添加媒体': 'emptyReply', '当前浏览器不支持录音': 'micUnsupported', '麦克风权限未开启': 'micDenied', '目前只支持图片或视频': 'onlyImageVideo',
+    '上传成功但未返回文件地址': 'uploadNoUrl', '发送成功': 'sendSuccess', '发送失败': 'sendFail', '刚刚已经发送过这条内容，请不要重复提交': 'duplicateReply'
+  };
+
+  function localeKey() {
+    const raw = String((window.config && (window.config.userLang || window.config.language || window.config.locale)) || navigator.language || 'zh-CN').replace('_', '-');
+    const lower = raw.toLowerCase();
+    if (lower.startsWith('zh')) return 'zh-CN';
+    if (lower.startsWith('my') || lower.startsWith('mm')) return 'my-MM';
+    if (lower.startsWith('vi')) return 'vi';
+    return 'en-GB';
+  }
+
+  function t(key, fallback, vars) {
+    const dict = I18N[localeKey()] || I18N['zh-CN'];
+    const zh = I18N['zh-CN'] || {};
+    let out = dict[key] || zh[key] || fallback || key;
+    if (vars && typeof vars === 'object') {
+      Object.keys(vars).forEach(name => { out = String(out).replace(new RegExp(`\\{${name}\\}`, 'g'), vars[name]); });
+    }
+    return out;
+  }
+
+  function localizeMessage(message) {
+    const key = ZH_MESSAGE_KEYS[String(message || '')];
+    return key ? t(key, message) : message;
+  }
+
+  const VERSION = '13.3.0';
   const UI_VERSION_ATTR = 'data-x-topic-detail-version';
 
   const IMAGE_CONFIG = {
@@ -98,6 +207,15 @@
     recordStartAt: 0,
     currentAudio: null,
     currentAudioCard: null,
+    profileCache: new Map(),
+    profileInflight: new Map(),
+    lightboxImages: [],
+    lightboxIndex: 0,
+    lastScrollY: 0,
+    toolPanelHidden: false,
+    tiktokPlayers: new Map(),
+    tiktokObserver: null,
+    tiktokActiveAudio: null,
     titleTranslated: false,
     titleOriginal: '',
     titleTranslatedText: '',
@@ -152,12 +270,14 @@
   }
 
   function showError(msg) {
-    if (window.app && typeof window.app.alertError === 'function') window.app.alertError(msg);
-    else window.alert(msg);
+    const out = localizeMessage(msg);
+    if (window.app && typeof window.app.alertError === 'function') window.app.alertError(out);
+    else window.alert(out);
   }
 
   function showSuccess(msg) {
-    if (window.app && typeof window.app.alertSuccess === 'function') window.app.alertSuccess(msg);
+    const out = localizeMessage(msg);
+    if (window.app && typeof window.app.alertSuccess === 'function') window.app.alertSuccess(out);
   }
 
   function wait(ms) {
@@ -206,16 +326,16 @@
 
   function timeAgoText(tsValue) {
     const ts = parseTimeCandidate(tsValue);
-    if (!ts || Number.isNaN(ts)) return '刚刚';
+    if (!ts || Number.isNaN(ts)) return t('justNow', '刚刚');
     const diff = Math.max(0, Date.now() - ts);
     const minute = 60000, hour = 60 * minute, day = 24 * hour, week = 7 * day, month = 30 * day, year = 365 * day;
-    if (diff >= year) return `${Math.floor(diff / year)}年前`;
-    if (diff >= month) return `${Math.floor(diff / month)}个月前`;
-    if (diff >= week) return `${Math.floor(diff / week)}周前`;
-    if (diff >= day) return `${Math.floor(diff / day)}天前`;
-    if (diff >= hour) return `${Math.floor(diff / hour)}小时前`;
-    if (diff >= minute) return `${Math.max(1, Math.floor(diff / minute))}分钟前`;
-    return '刚刚';
+    if (diff >= year) return `${Math.floor(diff / year)}${t('yearsAgo', '年前')}`;
+    if (diff >= month) return `${Math.floor(diff / month)}${t('monthsAgo', '个月前')}`;
+    if (diff >= week) return `${Math.floor(diff / week)}${t('weeksAgo', '周前')}`;
+    if (diff >= day) return `${Math.floor(diff / day)}${t('daysAgo', '天前')}`;
+    if (diff >= hour) return `${Math.floor(diff / hour)}${t('hoursAgo', '小时前')}`;
+    if (diff >= minute) return `${Math.max(1, Math.floor(diff / minute))}${t('minutesAgo', '分钟前')}`;
+    return t('justNow', '刚刚');
   }
 
   function getPostTimeMeta($post) {
@@ -265,12 +385,68 @@
   }
 
   function getUsername($post) {
-    return $.trim($post.find('[data-username]').first().text()) || getUserSlug($post) || '用户';
+    return $.trim($post.find('[data-username]').first().text()) || getUserSlug($post) || t('user', '用户');
   }
 
   function getUserTopicsUrl($post) {
     const slug = getUserSlug($post);
     return slug ? rel(`/user/${encodeURIComponent(slug)}/topics`) : '';
+  }
+
+
+  function profileCacheKey(userslug) {
+    return `${PLUGIN_ID}:profile:${String(userslug || '').toLowerCase()}`;
+  }
+
+  function normalizeProfilePayload(payload) {
+    const data = payload && (payload.user || payload.response?.user || payload.response || payload.data?.user || payload.data || payload);
+    return data && typeof data === 'object' ? data : {};
+  }
+
+  function flagFromCountryCode(code) {
+    const value = String(code || '').trim().toUpperCase();
+    if (!/^[A-Z]{2}$/.test(value)) return '';
+    return value.replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0)));
+  }
+
+  function flagFromProfile(profile) {
+    const fields = [profile.flagEmoji, profile.countryCode, profile.country_code, profile.country, profile.country_name, profile.nationality, profile.region, profile.language_flag, profile.location];
+    for (const item of fields) {
+      const raw = String(item || '').trim();
+      if (!raw) continue;
+      const emoji = raw.match(/[\u{1F1E6}-\u{1F1FF}]{2}/u);
+      if (emoji) return emoji[0];
+      const direct = raw.match(/\b[A-Z]{2}\b/i);
+      if (direct) return flagFromCountryCode(direct[0]);
+      const mapped = COUNTRY_MAP[normalizeLoc(raw)] || COUNTRY_MAP[raw.toLowerCase()];
+      if (mapped) return mapped;
+    }
+    return '';
+  }
+
+  async function fetchUserProfileCached(userslug) {
+    const slug = String(userslug || '').trim();
+    if (!slug) return {};
+    const key = slug.toLowerCase();
+    if (state.profileCache.has(key)) return state.profileCache.get(key);
+    const stored = safeJsonGet(profileCacheKey(key));
+    if (stored && stored.expiresAt > Date.now() && stored.data) {
+      state.profileCache.set(key, stored.data);
+      return stored.data;
+    }
+    if (state.profileInflight.has(key)) return state.profileInflight.get(key);
+    const promise = fetch(rel(`/api/user/${encodeURIComponent(slug)}`), { credentials: 'same-origin', headers: { accept: 'application/json' } })
+      .then(res => res.ok ? res.json() : {})
+      .then(json => {
+        const data = normalizeProfilePayload(json);
+        state.profileCache.set(key, data);
+        safeJsonSet(profileCacheKey(key), { expiresAt: Date.now() + PROFILE_CACHE_MS, data });
+        return data;
+      })
+      .catch(() => ({}))
+      .finally(() => state.profileInflight.delete(key));
+    state.profileInflight.set(key, promise);
+    return promise;
   }
 
   function getTopicTitleText() {
@@ -309,7 +485,7 @@
       aiEndpoint: saved.aiEndpoint || '',
       aiModel: saved.aiModel || '',
       aiApiKey: saved.aiApiKey || '',
-      aiPrompt: saved.aiPrompt || DEFAULT_PROMPT,
+      aiPrompt: saved.aiPrompt || t('defaultPrompt', DEFAULT_PROMPT),
       temperature: Number.isFinite(Number(saved.temperature)) ? Number(saved.temperature) : 0.3
     };
   }
@@ -322,7 +498,7 @@
 
   function setTranslateButtonState($btn, mode) {
     if (!$btn || !$btn.length) return;
-    const map = { idle: '翻译', loading: '翻译中', translated: '查看原文' };
+    const map = { idle: t('translate', '翻译'), loading: t('translating', '翻译中'), translated: t('original', '查看原文') };
     $btn.attr('title', map[mode] || map.idle)
       .attr('aria-label', map[mode] || map.idle)
       .toggleClass('is-translated', mode === 'translated')
@@ -451,7 +627,7 @@
   function renderLanguagePicker(role) {
     const current = role === 'source' ? normalizeLangCode($('#x-setting-source-lang').val(), 'auto') : normalizeLangCode($('#x-setting-target-lang').val(), 'en');
     const list = role === 'source' ? SOURCE_LANGUAGE_OPTIONS : TARGET_LANGUAGE_OPTIONS;
-    $('#x-lang-picker-title').text(role === 'source' ? '选择原文语言' : '选择目标语言');
+    $('#x-lang-picker-title').text(role === 'source' ? t('sourceLangTitle', '选择原文语言') : t('targetLangTitle', '选择目标语言'));
     $('#x-lang-picker-list').html(list.map(code => {
       const meta = getLangMeta(code);
       const active = current === code ? ' active' : '';
@@ -502,7 +678,7 @@
     saveTranslateSettings(next);
     clearTranslationCaches();
     closeTranslateSettingsModal();
-    showSuccess('翻译设置已保存到本地');
+    showSuccess(t('settingsSaved', '翻译设置已保存到本地'));
   }
 
   function ensureTitleTranslateButton() {
@@ -511,7 +687,7 @@
     state.titleOriginal = state.titleOriginal || getTopicTitleText();
     $title.data('x-original-title', state.titleOriginal);
     $title.wrap('<span class="x-title-translate-wrap"></span>');
-    $title.after('<button type="button" class="x-title-translate" aria-label="翻译" title="翻译"><i class="fa-solid fa-language"></i></button>');
+    $title.after(`<button type="button" class="x-title-translate" aria-label="${escapeHtml(t('translate', '翻译'))}" title="${escapeHtml(t('translate', '翻译'))}"><i class="fa-solid fa-language"></i></button>`);
     setTranslateButtonState($('.x-title-translate').first(), 'idle');
   }
 
@@ -534,49 +710,79 @@
       setTranslateButtonState($btn, 'translated');
     } catch (err) {
       console.warn(err);
-      showError('标题翻译失败');
+      showError(t('titleTranslateFail', '标题翻译失败'));
       setTranslateButtonState($btn, 'idle');
     }
   }
 
   function makeAiSettingsButton() {
-    return $('<button type="button" class="x-ai-settings-btn" aria-label="AI翻译设置" title="AI翻译设置"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>AI翻译</span></button>');
+    return $(`<button type="button" class="x-ai-settings-btn" aria-label="${escapeHtml(t('aiSettings', 'AI翻译设置'))}" title="${escapeHtml(t('aiSettings', 'AI翻译设置'))}"><i class="fa-solid fa-sliders" aria-hidden="true"></i><span>${escapeHtml(t('aiTranslate', 'AI翻译'))}</span></button>`);
+  }
+
+  function makeToolbarButtonLike($host, $btn) {
+    $btn.removeClass('btn-link btn-ghost').addClass('btn btn-sm btn-light x-ai-settings-btn');
+    if ($host && $host.length) {
+      const sample = $host.find('button.btn,a.btn').not('.x-ai-settings-btn').first();
+      if (sample.length) {
+        const classes = String(sample.attr('class') || '').split(/\s+/).filter(Boolean).filter(c => !/^dropdown-toggle$/.test(c));
+        if (classes.length) $btn.addClass(classes.join(' '));
+      }
+    }
+    return $btn;
   }
 
   function injectTopicToolbar() {
     const $existing = $('.x-ai-settings-btn').first().detach();
     $('.x-topic-toolbar').remove();
     const $btn = $existing.length ? $existing : makeAiSettingsButton();
+    $btn.attr({ type: 'button', 'data-x-topic-tool': 'translate-settings' });
 
     const hostSelectors = [
       '.topic-main-buttons .btn-group',
       'nav.topic-main-buttons .btn-group',
+      '[component="topic/tools"] .btn-group',
+      '[component="topic/tools"]',
       '.topic-main-buttons',
       'nav.topic-main-buttons',
-      '.sticky-tools .thread-tools',
-      '.topic-sidebar-tools .thread-tools',
-      '[component="topic/tools"]',
+      '.thread-tools .btn-group',
       '.thread-tools'
     ];
 
     let $host = $();
     for (const selector of hostSelectors) {
       const $candidate = $(selector).filter(function () {
-        return !$(this).closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker').length;
+        const $self = $(this);
+        if ($self.closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker,#x-page-picker').length) return false;
+        if ($self.closest('.post-tools,.post-bar,[component="post"]').length) return false;
+        return true;
       }).first();
       if ($candidate.length) { $host = $candidate; break; }
     }
 
     if ($host.length) {
-      const $gearIcon = $host.find('.fa-gear,.fa-cog,.fa-cogs').last();
+      makeToolbarButtonLike($host, $btn);
+      const $gearIcon = $host.find('.fa-gear,.fa-cog,.fa-cogs,.fa-sliders').not($btn.find('i')).last();
       const $gearButton = $gearIcon.length ? $gearIcon.closest('a,button,.btn,.dropdown,.btn-group') : $();
-      if ($gearButton.length && $gearButton.parent().length) $gearButton.after($btn);
+      if ($gearButton.length && $gearButton.parent().length && !$gearButton.is($btn)) $gearButton.after($btn);
       else $host.append($btn);
-      return;
+      $host.addClass('x-topic-toolbar-host');
+    } else {
+      const $anchor = $('.topic .topic-main-buttons, .topic-info, [component="topic/header"]').first();
+      if (!$('.x-ai-settings-inline-host').length) $anchor.length ? $anchor.after('<div class="x-ai-settings-inline-host"></div>') : $('body').append('<div class="x-ai-settings-inline-host"></div>');
+      $('.x-ai-settings-inline-host').first().append($btn);
     }
 
-    const $anchor = $('.topic .topic-main-buttons, .topic-info, [component="topic/header"]').first();
-    if ($anchor.length) $anchor.after($('<div class="x-ai-settings-inline-host"></div>').append($btn));
+    $btn.removeClass('d-none hidden invisible').css({ display: 'inline-flex' });
+  }
+
+  function syncTopicToolPanelVisibility() {
+    if (!isTopicPage()) return;
+    const y = window.scrollY || window.pageYOffset || 0;
+    const shouldHide = y > 96 && y > Number(state.lastScrollY || 0);
+    state.lastScrollY = y;
+    if (state.toolPanelHidden === shouldHide) return;
+    state.toolPanelHidden = shouldHide;
+    $('body').toggleClass('x-topic-tools-hidden', shouldHide).toggleClass('x-topic-scrolled', y > 72);
   }
 
   function getSignatureText($post) {
@@ -595,10 +801,388 @@
     return /\.(png|jpe?g|gif|webp|avif)(?:[?#].*)?$/i.test(String(href || ''));
   }
 
+  function isTikTokHref(href) {
+    const raw = String(href || '').replace(/&amp;/g, '&');
+    return /(?:^|\.)tiktok\.com\//i.test(raw) && /\/video\/\d+/i.test(raw);
+  }
+
+  function getTikTokVideoId(href) {
+    const match = String(href || '').match(/\/video\/(\d+)/i);
+    return match ? match[1] : '';
+  }
+
+  function canonicalTikTokUrl(href) {
+    const raw = String(href || '').replace(/&amp;/g, '&').trim();
+    const match = raw.match(/https?:\/\/(?:www\.)?tiktok\.com\/@([^/\s<>'"]+)\/video\/(\d+)/i);
+    if (match) return `https://www.tiktok.com/@${match[1]}/video/${match[2]}`;
+    try {
+      const url = new URL(raw, location.origin);
+      return url.href;
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  function tiktokPlayerUrl(videoId, autoplay) {
+    const params = new URLSearchParams({
+      autoplay: autoplay ? '1' : '0',
+      muted: '1',
+      loop: '1',
+      rel: '0',
+      controls: '0',
+      progress_bar: '0',
+      play_button: '0',
+      volume_control: '0',
+      fullscreen_button: '0',
+      timestamp: '0',
+      music_info: '0',
+      description: '0',
+      native_context_menu: '0',
+      closed_caption: '0',
+      playsinline: '1'
+    });
+    return `https://www.tiktok.com/player/v1/${encodeURIComponent(videoId)}?${params.toString()}`;
+  }
+
+  function postTikTokMessage(player, type, value) {
+    if (!player || !player.iframe || !player.iframe.contentWindow) return;
+    player.iframe.contentWindow.postMessage({ 'x-tiktok-player': true, type, value }, '*');
+  }
+
+  function updateTikTokUi(player, patch) {
+    if (!player) return;
+    Object.assign(player, patch || {});
+    const $card = player.$card;
+    if (!$card || !$card.length) return;
+    const ready = !!player.ready;
+    const status = player.status || 'paused';
+    const frameVisible = !!(player.iframe && ready && player.hasVisibleFrame && status !== 'unavailable');
+    $card.attr({ 'data-status': status, 'data-ready': ready ? '1' : '0', 'data-frame-visible': frameVisible ? '1' : '0' })
+      .toggleClass('is-mounted', !!player.iframe)
+      .toggleClass('is-ready', ready)
+      .toggleClass('is-playing', status === 'playing')
+      .toggleClass('is-paused', status === 'paused')
+      .toggleClass('is-loading', status === 'loading')
+      .toggleClass('is-unavailable', status === 'unavailable')
+      .toggleClass('is-frame-visible', frameVisible);
+    $card.find('.x-tiktok-cover').toggleClass('is-hidden', frameVisible);
+    $card.find('.x-tiktok-frame').toggleClass('is-visible', frameVisible);
+    $card.find('.x-tiktok-play i').attr('class', status === 'playing' ? 'fa-solid fa-pause' : 'fa-solid fa-play');
+    $card.find('.x-tiktok-sound')
+      .toggleClass('is-ready', ready)
+      .toggleClass('is-on', !player.muted)
+      .attr({ title: player.muted ? '开启声音' : '关闭声音', 'aria-label': player.muted ? '开启声音' : '关闭声音' })
+      .html(player.muted ? '<i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>' : '<i class="fa-solid fa-volume-high" aria-hidden="true"></i>');
+    $card.find('.x-tiktok-msg').toggleClass('is-visible', status === 'unavailable').text(status === 'unavailable' ? t('tiktokUnavailable', 'TikTok 视频加载失败，点此重试') : '');
+  }
+
+  async function loadTikTokCover(player) {
+    const key = `x-topic-tiktok-cover:${player.videoId}`;
+    const cached = safeJsonGet(key);
+    const now = Date.now();
+    if (cached && cached.url && cached.expiresAt > now) {
+      player.$card.find('.x-tiktok-cover img').attr('src', cached.url);
+      return;
+    }
+    try {
+      const res = await fetch(`https://www.tiktok.com/oembed?url=${encodeURIComponent(player.url)}`, { cache: 'force-cache' });
+      if (!res.ok) throw new Error('cover');
+      const json = await res.json();
+      if (json && json.thumbnail_url) {
+        safeJsonSet(key, { url: json.thumbnail_url, expiresAt: now + 3 * 24 * 60 * 60 * 1000 });
+        player.$card.find('.x-tiktok-cover img').attr('src', json.thumbnail_url);
+      }
+    } catch (_) {}
+  }
+
+  function armTikTokTimeout(player, userInitiated) {
+    if (!player) return;
+    window.clearTimeout(player.timer);
+    player.timer = window.setTimeout(() => {
+      if (!player.ready && player.wantPlay) updateTikTokUi(player, { status: 'unavailable', wantPlay: false });
+    }, userInitiated ? 18000 : 14000);
+  }
+
+  function pauseOtherTikToks(exceptId) {
+    (state.tiktokPlayers || new Map()).forEach((player, id) => {
+      if (id === exceptId) return;
+      if (player.iframe) postTikTokMessage(player, 'pause');
+      if (player.status !== 'unavailable') updateTikTokUi(player, { status: 'paused', wantPlay: false });
+    });
+  }
+
+  function mountTikTokPlayer(player, opts = {}) {
+    if (!player || !$('body').hasClass('page-topic')) return;
+    const userInitiated = !!opts.userInitiated;
+    if (userInitiated) player.hasUserInteracted = true;
+    if (player.iframe && player.preloadTimedOut && userInitiated) {
+      try { player.iframe.remove(); } catch (_) {}
+      player.iframe = null;
+      player.ready = false;
+    }
+    if (!player.iframe) {
+      const iframe = document.createElement('iframe');
+      iframe.className = 'x-tiktok-frame';
+      iframe.src = tiktokPlayerUrl(player.videoId, userInitiated || !!opts.autoplay);
+      iframe.allow = 'autoplay; fullscreen; encrypted-media; picture-in-picture';
+      iframe.loading = userInitiated ? 'eager' : 'lazy';
+      iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+      iframe.title = 'TikTok Player';
+      iframe.setAttribute('fetchpriority', userInitiated ? 'high' : 'auto');
+      player.$card.find('.x-tiktok-shell').append(iframe);
+      player.iframe = iframe;
+      updateTikTokUi(player, { status: userInitiated ? 'loading' : 'paused', ready: false, muted: true });
+      armTikTokTimeout(player, userInitiated);
+    }
+    if (userInitiated) {
+      player.wantPlay = true;
+      player.playRequestedAt = Date.now();
+      armTikTokTimeout(player, true);
+      if (player.ready) {
+        pauseOtherTikToks(player.id);
+        updateTikTokUi(player, { status: 'playing' });
+      } else updateTikTokUi(player, { status: 'loading' });
+      postTikTokMessage(player, 'mute');
+      postTikTokMessage(player, 'play');
+      window.setTimeout(() => postTikTokMessage(player, 'play'), 120);
+      window.setTimeout(() => postTikTokMessage(player, 'play'), 520);
+    }
+  }
+
+  function toggleTikTokPlayer(player) {
+    if (!player) return;
+    if (player.status === 'playing') {
+      player.wantPlay = false;
+      postTikTokMessage(player, 'pause');
+      updateTikTokUi(player, { status: 'paused' });
+      return;
+    }
+    mountTikTokPlayer(player, { userInitiated: true, autoplay: true });
+  }
+
+  function createTikTokPlayer(href) {
+    const url = canonicalTikTokUrl(href);
+    const videoId = getTikTokVideoId(url);
+    if (!videoId) return $();
+    const id = `x-tiktok-${videoId}-${Math.random().toString(36).slice(2)}`;
+    const $card = $(`
+      <div class="x-tiktok-player" data-player-id="${escapeHtml(id)}" data-video-id="${escapeHtml(videoId)}" data-status="paused" data-ready="0">
+        <div class="x-tiktok-shell">
+          <div class="x-tiktok-cover"><img alt="TikTok cover" loading="lazy" /></div>
+          <button type="button" class="x-tiktok-hotspot" aria-label="播放或暂停"></button>
+          <button type="button" class="x-tiktok-play" aria-label="播放"><i class="fa-solid fa-play" aria-hidden="true"></i></button>
+          <button type="button" class="x-tiktok-sound" aria-label="开启声音" title="开启声音"><i class="fa-solid fa-volume-xmark" aria-hidden="true"></i></button>
+          <button type="button" class="x-tiktok-open" aria-label="打开原视频"><i class="fa-brands fa-tiktok" aria-hidden="true"></i></button>
+          <button type="button" class="x-tiktok-msg"></button>
+        </div>
+      </div>`);
+    const player = { id, videoId, url, $card, iframe: null, ready: false, muted: true, status: 'paused', wantPlay: false, hasUserInteracted: false, hasVisibleFrame: false, preloadTimedOut: false, playRequestedAt: 0, timer: 0 };
+    state.tiktokPlayers.set(id, player);
+    loadTikTokCover(player);
+
+    $card.find('.x-tiktok-hotspot,.x-tiktok-play,.x-tiktok-msg').on('click.xTikTok', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleTikTokPlayer(player);
+    });
+    $card.find('.x-tiktok-sound').on('click.xTikTok', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      mountTikTokPlayer(player, { userInitiated: true, autoplay: true });
+      if (!player.ready || !player.iframe) return;
+      const muted = !player.muted;
+      postTikTokMessage(player, muted ? 'mute' : 'unMute');
+      updateTikTokUi(player, { muted });
+    });
+    $card.find('.x-tiktok-open').on('click.xTikTok', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+    observeTikTokPlayer(player);
+    return $card;
+  }
+
+  function observeTikTokPlayer(player) {
+    if (!player || !player.$card || !player.$card[0]) return;
+    if (navigator.connection && navigator.connection.saveData) return;
+    if (!('IntersectionObserver' in window)) {
+      window.setTimeout(() => mountTikTokPlayer(player, { autoplay: true }), 700);
+      return;
+    }
+    if (!state.tiktokObserver) {
+      state.tiktokObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = $(entry.target).attr('data-player-id');
+          const p = state.tiktokPlayers.get(id);
+          if (p) mountTikTokPlayer(p, { autoplay: true });
+          state.tiktokObserver.unobserve(entry.target);
+        });
+      }, { root: null, rootMargin: '900px 0px 1200px 0px', threshold: 0.01 });
+    }
+    state.tiktokObserver.observe(player.$card[0]);
+  }
+
+  function installTikTokMessageBridge() {
+    if (window.__peipeTopicDetailTikTokBridgeV133) return;
+    window.__peipeTopicDetailTikTokBridgeV133 = true;
+    window.addEventListener('message', function (event) {
+      let data = event.data;
+      if (typeof data === 'string') {
+        try { data = JSON.parse(data); } catch (_) { return; }
+      }
+      if (!data || !data['x-tiktok-player']) return;
+      let host = '';
+      try { host = new URL(event.origin).hostname; } catch (_) {}
+      if (!/(^|\.)tiktok\.com$|(^|\.)tiktokcdn\.com$/.test(host)) return;
+      (state.tiktokPlayers || new Map()).forEach(player => {
+        if (!player.iframe || player.iframe.contentWindow !== event.source) return;
+        if (data.type === 'onPlayerReady') {
+          window.clearTimeout(player.timer);
+          player.timer = 0;
+          player.ready = true;
+          player.preloadTimedOut = false;
+          if (player.wantPlay) {
+            pauseOtherTikToks(player.id);
+            updateTikTokUi(player, { status: 'playing', ready: true, muted: true });
+            postTikTokMessage(player, 'mute');
+            postTikTokMessage(player, 'play');
+          } else {
+            updateTikTokUi(player, { status: 'paused', ready: true, muted: true });
+            window.setTimeout(() => { if (!player.wantPlay) postTikTokMessage(player, 'pause'); }, 160);
+          }
+          return;
+        }
+        if (data.type === 'onStateChange') {
+          const raw = data.value;
+          const value = typeof raw === 'number' ? raw : Number(raw);
+          const word = String(raw || '').toLowerCase();
+          if (value === 1 || word === 'playing') {
+            window.clearTimeout(player.timer);
+            player.hasVisibleFrame = true;
+            pauseOtherTikToks(player.id);
+            updateTikTokUi(player, { status: 'playing', ready: true });
+            return;
+          }
+          if (value === 3 || word === 'buffering') {
+            if (player.wantPlay) updateTikTokUi(player, { status: 'loading', ready: true });
+            return;
+          }
+          if ([0, 2].includes(value) || word === 'ended' || word === 'paused') {
+            const early = player.wantPlay && Date.now() - Number(player.playRequestedAt || 0) < 4800;
+            if (early) { postTikTokMessage(player, 'play'); return; }
+            updateTikTokUi(player, { status: 'paused', wantPlay: false, ready: true });
+          }
+        }
+        if (data.type === 'onMute') updateTikTokUi(player, { muted: !!data.value });
+        if (data.type === 'onPlayerError' || data.type === 'onError') {
+          if (!player.hasUserInteracted) {
+            try { player.iframe && player.iframe.remove(); } catch (_) {}
+            player.iframe = null;
+            player.preloadTimedOut = true;
+            updateTikTokUi(player, { status: 'paused', ready: false, wantPlay: false });
+          } else updateTikTokUi(player, { status: 'unavailable', ready: false, wantPlay: false });
+        }
+      });
+    });
+  }
+
+  function bindTikTokEmbeds($post) {
+    const $content = $post.find('[component="post/content"]').first();
+    if (!$content.length) return;
+    installTikTokMessageBridge();
+
+    $content.find('a[href]').each(function () {
+      const $link = $(this);
+      if ($link.data('x-tiktok-bound') || $link.closest('.x-tiktok-player,.x-tiktok-player,.x-tiktok-wrap,.tiktok-embed,.haa9-detail-content').length) return;
+      const href = $link.attr('href') || '';
+      if (!isTikTokHref(href)) return;
+      $link.data('x-tiktok-bound', true);
+      const $player = createTikTokPlayer(href);
+      if (!$player.length) return;
+      const $p = $link.closest('p');
+      if ($p.length && $.trim($p.text()).replace(/\s+/g, ' ') === $.trim($link.text()).replace(/\s+/g, ' ')) $p.replaceWith($player);
+      else $link.replaceWith($player);
+    });
+
+    $content.find('p,div').contents().filter(function () {
+      return this.nodeType === 3 && /tiktok\.com\//i.test(this.nodeValue || '');
+    }).each(function () {
+      const text = String(this.nodeValue || '');
+      const match = text.match(/https?:\/\/(?:www\.)?tiktok\.com\/@[^\s<>'"]+\/video\/\d+[^\s<>'"]*/i);
+      if (!match) return;
+      const $player = createTikTokPlayer(match[0]);
+      if (!$player.length) return;
+      const before = text.slice(0, match.index).trim();
+      const after = text.slice(match.index + match[0].length).trim();
+      const nodes = [];
+      if (before) nodes.push(document.createTextNode(before + ' '));
+      nodes.push($player[0]);
+      if (after) nodes.push(document.createTextNode(' ' + after));
+      $(this).replaceWith(nodes);
+    });
+  }
+
+  function mediaParent($node) {
+    const $a = $node.closest('a[href]');
+    if ($a.length && (isImageHref($a.attr('href')) || $a.find('img').length)) return $a;
+    return $node;
+  }
+
+  function buildImageGrid($post) {
+    const $content = $post.find('[component="post/content"]').first();
+    if (!$content.length || $content.data('x-image-grid-built')) return;
+    const $imgs = $content.find('img').filter(function () {
+      const $img = $(this);
+      if ($img.closest('.emoji,.avatar,.x-avatar-wrap,.x-media-grid,.x-tiktok-player,.x-tiktok-wrap,.tiktok-embed,.haa9-detail-content').length) return false;
+      if ($img.hasClass('emoji') || $img.hasClass('avatar') || $img.hasClass('x-native-media-hidden')) return false;
+      const src = $img.attr('src') || $img.attr('data-src') || '';
+      return !!src && !/emoji|avatar/i.test(src);
+    });
+    if (!$imgs.length) return;
+
+    const images = [];
+    $imgs.each(function () {
+      const $img = $(this);
+      const src = $img.attr('src') || $img.attr('data-src') || '';
+      const full = $img.closest('a[href]').attr('href') || src;
+      if (src && !images.some(item => item.src === src || item.full === full)) images.push({ src, full });
+    });
+    if (images.length <= 1) {
+      $imgs.addClass('x-detail-image');
+      return;
+    }
+
+    $content.data('x-image-grid-built', true);
+    const show = images.slice(0, 4);
+    const $grid = $(`<div class="x-media-grid" data-count="${Math.min(show.length, 4)}" data-total="${images.length}"></div>`);
+    show.forEach((item, index) => {
+      const more = index === 3 && images.length > 4 ? `<span class="x-media-more">+${images.length - 4}</span>` : '';
+      const $btn = $(`<button type="button" class="x-media-grid-item" data-index="${index}" aria-label="${escapeHtml(t('zoomImage', '放大图片'))}"><img src="${escapeHtml(item.src)}" alt="" loading="lazy" />${more}</button>`);
+      $btn.on('click.xGrid', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMediaLightbox(images.map(x => x.full || x.src), index);
+      });
+      $grid.append($btn);
+    });
+
+    const $first = mediaParent($imgs.first());
+    ($first.closest('p').length ? $first.closest('p') : $first).before($grid);
+    $imgs.each(function () {
+      const $img = $(this);
+      const $holder = mediaParent($img);
+      $holder.addClass('x-native-grid-source').attr('aria-hidden', 'true');
+      const $p = $holder.closest('p');
+      if ($p.length && !$p.clone().find('.x-post-translate,.x-translate-box,script,style').remove().end().text().trim()) $p.addClass('x-native-grid-source');
+    });
+  }
+
   function cleanPostTextForTranslate($content) {
     if (!$content || !$content.length) return '';
     const $clone = $content.clone();
-    $clone.find('.x-translate-box, .x-post-translate, .x-voice-card, audio, video, img, script, style').remove();
+    $clone.find('.x-translate-box, .x-post-translate, .x-voice-card, .x-media-grid, .x-tiktok-player, .x-tiktok-wrap, .tiktok-embed, audio, video, img, iframe, script, style').remove();
     $clone.find('a[href]').filter(function () {
       const href = $(this).attr('href') || '';
       return isAudioHref(href) || isVideoHref(href) || isImageHref(href);
@@ -624,16 +1208,16 @@
     $content.find('.x-translate-box, .x-post-translate').remove();
     let text = $.trim($content.text()).replace(/\s+/g, ' ').replace(/^语音消息$/g, '').trim();
     if (text) return text.slice(0, 72);
-    if ($content.find('img').length) return '[图片]';
-    if ($content.find('video').length) return '[视频]';
-    if ($content.find('a[href]').filter(function () { return isAudioHref($(this).attr('href')); }).length) return '[语音消息]';
-    return '回复这条帖子';
+    if ($content.find('img').length) return `[${t('image', '图片')}]`;
+    if ($content.find('video').length) return `[${t('video', '视频')}]`;
+    if ($content.find('a[href]').filter(function () { return isAudioHref($(this).attr('href')); }).length) return `[${t('voiceMessage', '语音消息')}]`;
+    return t('quotePost', '回复这条帖子');
   }
 
   function buildQuotePrefix(data) {
     if (!data || !data.pid) return '';
     const link = rel(`/post/${data.pid}`);
-    const excerpt = String(data.excerpt || '').replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180) || '引用内容';
+    const excerpt = String(data.excerpt || '').replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 180) || t('quoteContent', '引用内容');
     return `> @${data.username} [说](${link}):\n> ${excerpt}\n\n`;
   }
 
@@ -650,7 +1234,7 @@
     const floor = getFloorNumber($post);
     const subClass = signature ? '' : ' is-empty';
     const userMain = profileUrl
-      ? `<a class="x-user-main x-profile-link" href="${escapeHtml(profileUrl)}" title="查看 ${escapeHtml(username)} 的主题">${escapeHtml(username)}</a>`
+      ? `<a class="x-user-main x-profile-link" href="${escapeHtml(profileUrl)}" title="${escapeHtml(t('viewUserTopicsOf', '查看 {username} 的主题', { username }))}">${escapeHtml(username)}</a>`
       : `<div class="x-user-main">${escapeHtml(username)}</div>`;
 
     const html = [
@@ -671,36 +1255,92 @@
     $container.prepend($(html));
   }
 
+  function sanitizeAvatarWrap($avatarWrap, profileUrl) {
+    if (!$avatarWrap || !$avatarWrap.length) return;
+    $avatarWrap.find('.x-avatar-link .x-avatar-link').each(function () {
+      const $inner = $(this);
+      $inner.children().first().insertBefore($inner);
+      $inner.remove();
+    });
+
+    const $avatars = $avatarWrap.find('.avatar,img.avatar').filter(function () {
+      return !$(this).closest('.x-flag,.x-status-dot').length;
+    });
+    if (!$avatars.length) return;
+
+    const $main = $avatars.first();
+    $avatars.not($main).each(function () {
+      const $dup = $(this);
+      const $parentLink = $dup.closest('.x-avatar-link');
+      $dup.remove();
+      if ($parentLink.length && !$parentLink.find('.avatar,img.avatar').length) $parentLink.remove();
+    });
+
+    if (profileUrl) {
+      let $link = $avatarWrap.find('.x-avatar-link').first();
+      $avatarWrap.find('.x-avatar-link').not($link).each(function () {
+        const $extra = $(this);
+        $extra.children().appendTo($avatarWrap);
+        $extra.remove();
+      });
+      if (!$link.length) {
+        $link = $(`<a class="x-avatar-link x-profile-link" href="${escapeHtml(profileUrl)}" title="${escapeHtml(t('viewUserTopics', '查看用户主题'))}"></a>`);
+        $main.before($link);
+      }
+      $link.attr('href', profileUrl);
+      if (!$main.closest($link).length) $link.append($main.detach());
+    }
+  }
+
   function decorateAvatar($post) {
     const $avatarWrap = $post.find('.post-container-parent > .bg-body').first();
     if (!$avatarWrap.length) return;
     $avatarWrap.addClass('x-avatar-wrap');
 
     const profileUrl = getUserTopicsUrl($post);
-    if (profileUrl && !$avatarWrap.find('.x-avatar-link').length) {
-      const $avatar = $avatarWrap.find('.avatar,img.avatar').first();
-      if ($avatar.length) {
-        const $link = $(`<a class="x-avatar-link x-profile-link" href="${escapeHtml(profileUrl)}" title="查看用户主题"></a>`);
-        $avatar.before($link);
-        $link.append($avatar);
-      }
-    }
+    sanitizeAvatarWrap($avatarWrap, profileUrl);
+
+    $avatarWrap.find('.x-status-dot').slice(1).remove();
+    $avatarWrap.find('.x-flag').slice(1).remove();
 
     const $statusEl = $post.find('[component="user/status"]').first();
     let statusClass = 'offline';
     if ($statusEl.hasClass('online')) statusClass = 'online';
     else if ($statusEl.hasClass('dnd')) statusClass = 'dnd';
     else if ($statusEl.hasClass('away')) statusClass = 'away';
-    if (!$avatarWrap.find('.x-status-dot').length) $avatarWrap.append(`<span class="x-status-dot ${statusClass}"></span>`);
+    let $dot = $avatarWrap.find('.x-status-dot').first();
+    if (!$dot.length) $dot = $('<span class="x-status-dot"></span>').appendTo($avatarWrap);
+    $dot.removeClass('online away dnd offline').addClass(statusClass);
 
     const userSlug = getUserSlug($post);
-    if (!userSlug || $avatarWrap.find('.x-flag').length) return;
-    $.get(rel(`/api/user/${encodeURIComponent(userSlug)}`)).done(data => {
-      const profile = data && (data.user || data) ? (data.user || data) : {};
-      const loc = profile.language_flag || profile.location || profile.country || profile.nationality || '';
-      const flag = COUNTRY_MAP[normalizeLoc(loc)] || COUNTRY_MAP[String(loc || '').trim()];
-      if (flag && !$avatarWrap.find('.x-flag').length) $avatarWrap.append(`<span class="x-flag">${flag}</span>`);
-    }).fail(() => {});
+    if (!userSlug) return;
+    if ($avatarWrap.data('x-flag-user') === userSlug && $avatarWrap.find('.x-flag').length) return;
+    if ($avatarWrap.data('x-flag-loading') === userSlug) return;
+    $avatarWrap.data('x-flag-loading', userSlug);
+    fetchUserProfileCached(userSlug).then(profile => {
+      const flag = flagFromProfile(profile || {});
+      $avatarWrap.removeData('x-flag-loading');
+      $avatarWrap.find('.x-flag').slice(1).remove();
+      if (!flag) return;
+      $avatarWrap.data('x-flag-user', userSlug);
+      let $flag = $avatarWrap.find('.x-flag').first();
+      if (!$flag.length) $flag = $('<span class="x-flag"></span>').appendTo($avatarWrap);
+      $flag.text(flag);
+      $avatarWrap.find('.x-flag').slice(1).remove();
+      sanitizeAvatarWrap($avatarWrap, profileUrl);
+    }).catch(() => { $avatarWrap.removeData('x-flag-loading'); });
+  }
+
+  function bindProfileLinks($post) {
+    const profileUrl = getUserTopicsUrl($post);
+    if (!profileUrl) return;
+    $post.find('a[href*="/user/"]').each(function () {
+      const $link = $(this);
+      if ($link.closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker').length) return;
+      const href = String($link.attr('href') || '');
+      if (!/\/user\//i.test(href)) return;
+      $link.addClass('x-profile-link').attr('href', profileUrl);
+    });
   }
 
   function detectUpvoteState($votesWrap, $upvoteBtn) {
@@ -756,8 +1396,8 @@
       $('#x-target-text').text('');
       return;
     }
-    $('#x-target-title').text(`引用 @${state.replyTo.username}`);
-    $('#x-target-text').text(state.replyTo.excerpt || '引用这条帖子');
+    $('#x-target-title').text(`${t('quote', '引用')} @${state.replyTo.username}`);
+    $('#x-target-text').text(state.replyTo.excerpt || t('quotePost', '引用这条帖子'));
     $target.addClass('show');
   }
 
@@ -769,7 +1409,7 @@
     const username = getUsername($post);
     const pid = parseInt($post.attr('data-pid') || '0', 10);
     const excerpt = getReplyExcerpt($post);
-    const $custom = $('<button type="button" class="x-btn x-quote-btn"><i class="fa-solid fa-solid fa-reply"></i><span class="x-label">引用</span></button>');
+    const $custom = $(`<button type="button" class="x-btn x-quote-btn"><i class="fa-solid fa-reply"></i><span class="x-label">${escapeHtml(t('quote', '引用'))}</span></button>`);
     $quoteOriginal.replaceWith($custom);
     $custom.on('click.xQuote', function (e) {
       e.preventDefault();
@@ -827,7 +1467,7 @@
       return;
     }
 
-    const $btn = $('<button type="button" class="x-post-translate" aria-label="翻译" title="翻译"><i class="fa-solid fa-language" aria-hidden="true"></i></button>');
+    const $btn = $(`<button type="button" class="x-post-translate" aria-label="${escapeHtml(t('translate', '翻译'))}" title="${escapeHtml(t('translate', '翻译'))}"><i class="fa-solid fa-language" aria-hidden="true"></i></button>`);
     insertTranslateButtonAfterText($content, $btn);
 
     if (!$content.find('.x-translate-box').length) $content.append('<div class="x-translate-box"></div>');
@@ -862,7 +1502,7 @@
         setTranslateButtonState($btn, 'translated');
       } catch (err) {
         console.warn(err);
-        showError('帖子翻译失败');
+        showError(t('postTranslateFail', '帖子翻译失败'));
         setTranslateButtonState($btn, 'idle');
       }
     });
@@ -1008,16 +1648,58 @@
     });
   }
 
+  function ensureMediaLightboxNodes() {
+    const $box = $('#x-media-lightbox');
+    if (!$box.length) return;
+    if (!$box.find('.x-lightbox-zone-left').length) {
+      $box.append('<button type="button" class="x-lightbox-zone x-lightbox-zone-left" aria-label="Previous"></button><button type="button" class="x-lightbox-zone x-lightbox-zone-right" aria-label="Next"></button><div class="x-lightbox-counter"></div><button type="button" class="x-lightbox-bottom"></button>');
+    }
+  }
+
+  function renderMediaLightbox() {
+    const images = state.lightboxImages || [];
+    const index = Math.max(0, Math.min(Number(state.lightboxIndex || 0), Math.max(0, images.length - 1)));
+    state.lightboxIndex = index;
+    const src = images[index] || '';
+    $('#x-media-lightbox img').attr('src', src);
+    $('#x-media-lightbox .x-lightbox-counter').text(t('lightboxCounter', '{current} / {total}', { current: images.length ? index + 1 : 0, total: images.length || 0 }));
+    $('#x-media-lightbox .x-lightbox-bottom').text(t('lightboxExit', '点击底部退出'));
+  }
+
+  function closeMediaLightbox() {
+    $('#x-media-lightbox').removeClass('show');
+    $('body').removeClass('x-media-lightbox-open x-topic-tools-hidden x-topic-scrolled');
+  }
+
+  function moveMediaLightbox(delta) {
+    const total = (state.lightboxImages || []).length;
+    if (total <= 1) return;
+    state.lightboxIndex = (Number(state.lightboxIndex || 0) + delta + total) % total;
+    renderMediaLightbox();
+  }
+
+  function openMediaLightbox(images, index) {
+    state.lightboxImages = (images || []).filter(Boolean);
+    state.lightboxIndex = Math.max(0, Math.min(Number(index || 0), Math.max(0, state.lightboxImages.length - 1)));
+    ensureMediaLightboxNodes();
+    renderMediaLightbox();
+    $('#x-media-lightbox').addClass('show');
+    $('body').addClass('x-media-lightbox-open');
+  }
+
   function bindMediaLightbox($scope) {
     $scope.find('[component="post/content"] img').each(function () {
       const $img = $(this);
+      if ($img.closest('.emoji,.avatar,.x-avatar-wrap,.x-media-grid,.x-tiktok-player,.x-tiktok-wrap,.tiktok-embed').length) return;
       if ($img.data('x-lightbox-bound')) return;
-      $img.data('x-lightbox-bound', true);
-      $img.css('cursor', 'zoom-in');
+      $img.data('x-lightbox-bound', true).addClass('x-detail-image').css('cursor', 'zoom-in');
       $img.on('click.xLightbox', function (e) {
         e.preventDefault();
-        $('#x-media-lightbox img').attr('src', $img.attr('src'));
-        $('#x-media-lightbox').addClass('show');
+        const $content = $img.closest('[component="post/content"]');
+        const images = $content.find('img.x-detail-image').map(function () { return $(this).closest('a[href]').attr('href') || $(this).attr('src'); }).get().filter(Boolean);
+        const src = $img.closest('a[href]').attr('href') || $img.attr('src');
+        const idx = Math.max(0, images.indexOf(src));
+        openMediaLightbox(images.length ? images : [src], idx);
       });
     });
   }
@@ -1025,12 +1707,14 @@
   function bindInlineVideos($post) {
     $post.find('[component="post/content"] a[href]').each(function () {
       const $link = $(this);
-      if ($link.data('x-video-bound')) return;
+      if ($link.data('x-video-bound') || $link.closest('.x-tiktok-player,.x-tiktok-wrap,.tiktok-embed').length) return;
       const href = $link.attr('href') || '';
       if (!isVideoHref(href)) return;
       $link.data('x-video-bound', true);
-      const $video = $(`<video controls preload="metadata" playsinline src="${escapeHtml(href)}"></video>`);
-      $link.replaceWith($video);
+      const $video = $(`<video class="x-inline-video" controls preload="metadata" playsinline src="${escapeHtml(href)}"></video>`);
+      const $p = $link.closest('p');
+      if ($p.length && $.trim($p.text()).replace(/\s+/g, ' ') === $.trim($link.text()).replace(/\s+/g, ' ')) $p.empty().append($video);
+      else $link.replaceWith($video);
     });
   }
 
@@ -1146,7 +1830,10 @@
     }
     decorateMeta($post);
     decorateAvatar($post);
+    bindProfileLinks($post);
+    bindTikTokEmbeds($post);
     bindAudioCards($post);
+    buildImageGrid($post);
     bindInlineVideos($post);
     bindMediaLightbox($post);
     bindPostTranslate($post);
@@ -1242,7 +1929,7 @@
     $card.addClass('show');
     mountPreviewVoicePlayer(state.pendingVoiceUrl);
     const kb = blob.size ? Math.max(1, Math.round(blob.size / 1024)) : 0;
-    $('#x-voice-meta').text(`录音已压缩为 16kbps，可试听后发送${kb ? `（约 ${kb}KB）` : ''}`);
+    $('#x-voice-meta').text(`${t('voiceReady', '录音已压缩为 16kbps，可试听后发送')}${kb ? `（约 ${kb}KB）` : ''}`);
   }
 
   function resetComposerState() {
@@ -1412,7 +2099,7 @@
       }
     } catch (err) {
       console.warn(err);
-      showError('输入内容翻译失败');
+      showError(t('inputTranslateFail', '输入内容翻译失败'));
     } finally {
       $btn.removeClass('is-loading').prop('disabled', false);
     }
@@ -1421,7 +2108,7 @@
   function cleanupOldInjectedUi() {
     const $bottom = $('#x-topic-bottom');
     if ($bottom.length && $bottom.attr(UI_VERSION_ATTR) !== VERSION) {
-      $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input').remove();
+      $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input,.x-ai-settings-btn,.x-ai-settings-inline-host').remove();
     }
   }
 
@@ -1434,48 +2121,48 @@
         <div id="x-reply-panel">
           <div id="x-reply-target">
             <div class="x-target-main"><div class="x-target-title" id="x-target-title"></div><div class="x-target-text" id="x-target-text"></div></div>
-            <button type="button" id="x-clear-reply" aria-label="清除引用"><i class="fa-solid fa-xmark"></i></button>
+            <button type="button" id="x-clear-reply" aria-label="${escapeHtml(t('clearQuote', '清除引用'))}"><i class="fa-solid fa-xmark"></i></button>
           </div>
           <div id="x-record-panel"><span id="x-record-dot"></span><span id="x-record-wave">${'<i></i>'.repeat(6)}</span><span id="x-record-time">00:00</span></div>
           <div id="x-preview-stack">
-            <div class="x-preview-card" id="x-image-preview"><button type="button" class="x-preview-remove" id="x-remove-image"><i class="fa-solid fa-xmark"></i></button><img src="" alt="图片预览" /></div>
+            <div class="x-preview-card" id="x-image-preview"><button type="button" class="x-preview-remove" id="x-remove-image"><i class="fa-solid fa-xmark"></i></button><img src="" alt="${escapeHtml(t('imagePreview', '图片预览'))}" /></div>
             <div class="x-preview-card" id="x-video-preview"><button type="button" class="x-preview-remove" id="x-remove-video"><i class="fa-solid fa-xmark"></i></button><video controls playsinline preload="metadata"></video></div>
             <div class="x-preview-card" id="x-audio-preview"><button type="button" class="x-preview-remove" id="x-remove-audio"><i class="fa-solid fa-xmark"></i></button><div class="x-audio-preview-inner"></div></div>
           </div>
-          <textarea id="x-reply-text" placeholder="友善回复..."></textarea>
+          <textarea id="x-reply-text" placeholder="${escapeHtml(t('replyPlaceholder', '友善回复...'))}"></textarea>
           <div id="x-reply-actions">
-            <button type="button" class="x-tool-btn" id="x-img-btn" aria-label="上传图片或视频"><i class="fa-solid fa-image"></i></button>
-            <button type="button" class="x-tool-btn" id="x-voice-btn" aria-label="录音"><i class="fa-solid fa-microphone"></i></button>
-            <button type="button" class="x-tool-btn x-reply-translate-btn" id="x-reply-translate-btn" aria-label="翻译输入内容" title="翻译输入内容"><i class="fa-solid fa-language"></i></button>
-            <div id="x-voice-meta"></div><button type="button" id="x-send-btn">发送</button>
+            <button type="button" class="x-tool-btn" id="x-img-btn" aria-label="${escapeHtml(t('uploadMedia', '上传图片或视频'))}"><i class="fa-solid fa-image"></i></button>
+            <button type="button" class="x-tool-btn" id="x-voice-btn" aria-label="${escapeHtml(t('record', '录音'))}"><i class="fa-solid fa-microphone"></i></button>
+            <button type="button" class="x-tool-btn x-reply-translate-btn" id="x-reply-translate-btn" aria-label="${escapeHtml(t('translateInput', '翻译输入内容'))}" title="${escapeHtml(t('translateInput', '翻译输入内容'))}"><i class="fa-solid fa-language"></i></button>
+            <div id="x-voice-meta"></div><button type="button" id="x-send-btn">${escapeHtml(t('send', '发送'))}</button>
           </div>
         </div>
-        <div class="x-bottom-inner"><div class="x-page-pill" id="x-page-pill">1 / 1</div><button type="button" class="x-reply-fab" id="x-reply-toggle" aria-label="打开回复框"><i class="fa-solid fa-pen"></i></button></div>
+        <div class="x-bottom-inner"><div class="x-page-pill" id="x-page-pill">1 / 1</div><button type="button" class="x-reply-fab" id="x-reply-toggle" aria-label="${escapeHtml(t('openReply', '打开回复框'))}"><i class="fa-solid fa-pen"></i></button></div>
       </div>
       <div id="x-page-picker-mask"></div>
       <div id="x-page-picker">
-        <div class="x-page-picker-sheet-title">楼层跳转</div>
+        <div class="x-page-picker-sheet-title">${escapeHtml(t('pageJump', '楼层跳转'))}</div>
         <div class="x-page-picker-body">
-          <div class="x-page-picker-left"><div class="x-page-picker-label">当前楼层</div><div class="x-page-picker-value-row"><input type="number" id="x-page-number" min="1" inputmode="numeric" /><div class="x-page-picker-value-total">/ <em id="x-page-total-inline">1</em></div></div><button type="button" id="x-page-use-current">使用当前楼层</button></div>
-          <div class="x-page-picker-right"><div class="x-page-picker-slider-wrap" id="x-page-slider-wrap"><span class="x-page-slider-end top"></span><span class="x-page-slider-track"><i id="x-page-slider-progress"></i></span><button type="button" id="x-page-slider-handle" aria-label="拖动楼层"><i class="fa-solid fa-angle-up"></i><i class="fa-solid fa-angle-down"></i></button><span class="x-page-slider-end bottom"></span></div></div>
+          <div class="x-page-picker-left"><div class="x-page-picker-label">${escapeHtml(t('currentFloor', '当前楼层'))}</div><div class="x-page-picker-value-row"><input type="number" id="x-page-number" min="1" inputmode="numeric" /><div class="x-page-picker-value-total">/ <em id="x-page-total-inline">1</em></div></div><button type="button" id="x-page-use-current">${escapeHtml(t('useCurrentFloor', '使用当前楼层'))}</button></div>
+          <div class="x-page-picker-right"><div class="x-page-picker-slider-wrap" id="x-page-slider-wrap"><span class="x-page-slider-end top"></span><span class="x-page-slider-track"><i id="x-page-slider-progress"></i></span><button type="button" id="x-page-slider-handle" aria-label="${escapeHtml(t('dragFloor', '拖动楼层'))}"><i class="fa-solid fa-angle-up"></i><i class="fa-solid fa-angle-down"></i></button><span class="x-page-slider-end bottom"></span></div></div>
         </div>
         <div class="x-page-picker-footer-meta"><span id="x-page-picker-current">1</span> / <span id="x-page-picker-total">1</span></div>
-        <div class="x-page-picker-bottom-actions"><button type="button" id="x-page-picker-cancel">取消</button><button type="button" id="x-page-go">跳转</button></div>
+        <div class="x-page-picker-bottom-actions"><button type="button" id="x-page-picker-cancel">${escapeHtml(t('cancel', '取消'))}</button><button type="button" id="x-page-go">${escapeHtml(t('go', '跳转'))}</button></div>
       </div>
-      <div id="x-media-lightbox"><button type="button" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button><img src="" alt="放大图片" /></div>
+      <div id="x-media-lightbox"><button type="button" aria-label="${escapeHtml(t('close', '关闭'))}"><i class="fa-solid fa-xmark"></i></button><img src="" alt="${escapeHtml(t('zoomImage', '放大图片'))}" /></div>
       <div id="x-translate-settings-mask"></div>
       <div id="x-translate-settings-modal">
-        <div class="x-settings-header"><div class="x-settings-title"><i class="fa-solid fa-language"></i><span>AI翻译设置</span></div><button type="button" id="x-settings-close" aria-label="关闭"><i class="fa-solid fa-xmark"></i></button></div>
+        <div class="x-settings-header"><div class="x-settings-title"><i class="fa-solid fa-language"></i><span>${escapeHtml(t('aiSettings', 'AI翻译设置'))}</span></div><button type="button" id="x-settings-close" aria-label="${escapeHtml(t('close', '关闭'))}"><i class="fa-solid fa-xmark"></i></button></div>
         <input type="hidden" id="x-setting-source-lang" value="auto" /><input type="hidden" id="x-setting-target-lang" value="en" />
         <div class="x-settings-preview-row"><button type="button" class="x-settings-preview-chip x-lang-trigger" id="x-lang-source-preview" data-lang-role="source"></button><span class="x-settings-preview-arrow"><i class="fa-solid fa-right-left"></i></span><button type="button" class="x-settings-preview-chip x-lang-trigger" id="x-lang-target-preview" data-lang-role="target"></button></div>
-        <div class="x-settings-tip">点击“原文”或“目标”才会展开语言选择</div>
+        <div class="x-settings-tip">${escapeHtml(t('settingsTip', '点击“原文”或“目标”才会展开语言选择'))}</div>
         <input type="hidden" id="x-translate-provider" value="google" />
-        <div class="x-provider-tabs"><button type="button" class="x-provider-tab active" data-provider="google">谷歌翻译</button><button type="button" class="x-provider-tab" data-provider="ai">AI翻译</button></div>
-        <div id="x-ai-settings"><div class="x-settings-grid"><label class="x-settings-field x-settings-field-full"><span>AI 接口</span><input type="text" id="x-setting-ai-endpoint" placeholder="https://your-api.example.com/v1" /></label><label class="x-settings-field"><span>模型</span><input type="text" id="x-setting-ai-model" placeholder="gpt-4.1-mini / qwen / deepseek" /></label><label class="x-settings-field x-settings-field-full"><span>密钥</span><input type="password" id="x-setting-ai-key" placeholder="API Key" /></label><label class="x-settings-field x-settings-field-full"><span>提示词</span><textarea id="x-setting-ai-prompt" rows="5" placeholder="支持 {{sourceLang}} 和 {{targetLang}} 占位符"></textarea></label></div></div>
-        <div class="x-settings-actions"><button type="button" class="x-settings-secondary" id="x-settings-cancel">取消</button><button type="button" class="x-settings-primary" id="x-settings-save">保存</button></div>
+        <div class="x-provider-tabs"><button type="button" class="x-provider-tab active" data-provider="google">${escapeHtml(t('googleTranslate', '谷歌翻译'))}</button><button type="button" class="x-provider-tab" data-provider="ai">${escapeHtml(t('aiProvider', 'AI翻译'))}</button></div>
+        <div id="x-ai-settings"><div class="x-settings-grid"><label class="x-settings-field x-settings-field-full"><span>${escapeHtml(t('apiEndpoint', 'AI 接口'))}</span><input type="text" id="x-setting-ai-endpoint" placeholder="https://your-api.example.com/v1" /></label><label class="x-settings-field"><span>${escapeHtml(t('model', '模型'))}</span><input type="text" id="x-setting-ai-model" placeholder="gpt-4.1-mini / qwen / deepseek" /></label><label class="x-settings-field x-settings-field-full"><span>${escapeHtml(t('apiKey', '密钥'))}</span><input type="password" id="x-setting-ai-key" placeholder="API Key" /></label><label class="x-settings-field x-settings-field-full"><span>${escapeHtml(t('prompt', '提示词'))}</span><textarea id="x-setting-ai-prompt" rows="5" placeholder="${escapeHtml(t('promptPlaceholder', '支持 {{sourceLang}} 和 {{targetLang}} 占位符'))}"></textarea></label></div></div>
+        <div class="x-settings-actions"><button type="button" class="x-settings-secondary" id="x-settings-cancel">${escapeHtml(t('cancel', '取消'))}</button><button type="button" class="x-settings-primary" id="x-settings-save">${escapeHtml(t('send', '保存'))}</button></div>
       </div>
       <div id="x-lang-picker-mask"></div>
-      <div id="x-lang-picker"><div class="x-lang-picker-header"><div class="x-lang-picker-title" id="x-lang-picker-title">选择语言</div><button type="button" class="x-lang-picker-close" id="x-lang-picker-close"><i class="fa-solid fa-xmark"></i></button></div><div id="x-lang-picker-list"></div></div>
+      <div id="x-lang-picker"><div class="x-lang-picker-header"><div class="x-lang-picker-title" id="x-lang-picker-title">${escapeHtml(t('chooseLang', '选择语言'))}</div><button type="button" class="x-lang-picker-close" id="x-lang-picker-close"><i class="fa-solid fa-xmark"></i></button></div><div id="x-lang-picker-list"></div></div>
       <input type="file" id="x-hidden-file-input" accept="image/*,video/*" capture="environment" style="display:none;" />
     `);
 
@@ -1497,8 +2184,15 @@
     $('#x-page-number').on('input.xPage', function () { setPagePickerValue($(this).val(), getVisiblePosts().length || 1); }).on('keydown.xPage', function (e) { if (e.key === 'Enter') scrollToPostByIndex($(this).val()); });
     $('#x-page-use-current').on('click.xPage', () => setPagePickerValue(getCurrentPostIndex(), getVisiblePosts().length || 1));
     bindPageSliderDrag();
-    $('#x-media-lightbox, #x-media-lightbox button').on('click.xLightbox', function (e) { e.preventDefault(); $('#x-media-lightbox').removeClass('show'); });
+    ensureMediaLightboxNodes();
+    $('#x-media-lightbox').on('click.xLightbox', function (e) { if (e.target === this) closeMediaLightbox(); });
     $('#x-media-lightbox img').on('click.xLightbox', e => e.stopPropagation());
+    $('#x-media-lightbox').on('click.xLightbox', '.x-lightbox-zone-left', function (e) { e.preventDefault(); e.stopPropagation(); moveMediaLightbox(-1); });
+    $('#x-media-lightbox').on('click.xLightbox', '.x-lightbox-zone-right', function (e) { e.preventDefault(); e.stopPropagation(); moveMediaLightbox(1); });
+    $('#x-media-lightbox').on('click.xLightbox', '.x-lightbox-bottom, > button[aria-label]', function (e) { e.preventDefault(); e.stopPropagation(); closeMediaLightbox(); });
+    let lightboxTouchX = 0;
+    $('#x-media-lightbox').on('touchstart.xLightbox pointerdown.xLightbox', function (e) { const p = e.originalEvent && (e.originalEvent.touches && e.originalEvent.touches[0] || e.originalEvent) || e; lightboxTouchX = p.clientX || 0; });
+    $('#x-media-lightbox').on('touchend.xLightbox pointerup.xLightbox', function (e) { const p = e.originalEvent && (e.originalEvent.changedTouches && e.originalEvent.changedTouches[0] || e.originalEvent) || e; const dx = (p.clientX || 0) - lightboxTouchX; if (Math.abs(dx) > 42) { e.preventDefault(); moveMediaLightbox(dx > 0 ? -1 : 1); } });
     $('#x-translate-settings-mask, #x-settings-cancel, #x-settings-close').on('click.xSettings', closeTranslateSettingsModal);
     $('#x-settings-save').on('click.xSettings', saveTranslateSettingsFromModal);
     $('.x-provider-tab').on('click.xSettings', function () { setTranslateProviderUI($(this).attr('data-provider')); });
@@ -1637,21 +2331,21 @@
     $(e.target).val('');
     if (!file) return;
     setPendingVoice(null);
-    $('#x-voice-meta').text('处理文件中...');
+    $('#x-voice-meta').text(t('fileProcessing', '处理文件中...'));
     if (/^image\//i.test(file.type)) {
       const next = await compressImage(file);
       setPendingFile(next, 'image');
-      $('#x-voice-meta').text(next !== file ? '图片已压缩并准备上传' : '图片已准备上传');
+      $('#x-voice-meta').text(next !== file ? t('imageCompressed', '图片已压缩并准备上传') : t('imageReady', '图片已准备上传'));
       return;
     }
     if (/^video\//i.test(file.type)) {
       const next = await compressVideo(file);
       setPendingFile(next, 'video');
-      $('#x-voice-meta').text(next !== file ? '视频已压缩并准备上传' : '视频已准备上传');
+      $('#x-voice-meta').text(next !== file ? t('videoCompressed', '视频已压缩并准备上传') : t('videoReady', '视频已准备上传'));
       return;
     }
     $('#x-voice-meta').text('');
-    showError('目前只支持图片或视频');
+    showError(t('onlyImageVideo', '目前只支持图片或视频'));
   }
 
   function stopRecordTimer() {
@@ -1661,7 +2355,7 @@
   function updateRecordMeta() {
     const sec = Math.floor((Date.now() - state.recordStartAt) / 1000);
     $('#x-record-time').text(formatDuration(sec));
-    $('#x-voice-meta').text(`录音中 ${formatDuration(sec)} · 16kbps`);
+    $('#x-voice-meta').text(`${t('recording', '录音中')} ${formatDuration(sec)} · 16kbps`);
   }
 
   function pickAudioMimeType() {
@@ -1687,7 +2381,7 @@
   }
 
   async function startRecording() {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return showError('当前浏览器不支持录音');
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) return showError(t('micUnsupported', '当前浏览器不支持录音'));
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -1722,7 +2416,7 @@
       state.recordTimer = window.setInterval(updateRecordMeta, 400);
     } catch (err) {
       console.warn(err);
-      showError('麦克风权限未开启');
+      showError(t('micDenied', '麦克风权限未开启'));
     }
   }
 
@@ -1796,7 +2490,7 @@
     const json = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error((json && (json.error || json.message || (json.status && json.status.message))) || 'upload failed');
     const url = extractUploadUrl(json);
-    if (!url) throw new Error('上传成功但未返回文件地址');
+    if (!url) throw new Error(t('uploadNoUrl', '上传成功但未返回文件地址'));
     return url;
   }
 
@@ -1858,10 +2552,10 @@
   async function sendReply() {
     if (state.replySending) return;
     const textVal = $.trim($('#x-reply-text').val());
-    if (!textVal && !state.pendingFile && !state.pendingVoiceBlob) return showError('请输入内容或添加媒体');
+    if (!textVal && !state.pendingFile && !state.pendingVoiceBlob) return showError(t('emptyReply', '请输入内容或添加媒体'));
     const $btn = $('#x-send-btn');
     state.replySending = true;
-    $btn.prop('disabled', true).text('发送中...');
+    $btn.prop('disabled', true).text(t('sending', '发送中...'));
     try {
       let finalContent = textVal;
       if (state.replyTo && state.replyTo.pid) finalContent = buildQuotePrefix(state.replyTo) + (finalContent || '');
@@ -1879,7 +2573,7 @@
 
       const fingerprint = [currentTopicKey(), state.replyTo && state.replyTo.pid || '', finalContent].join('|');
       if ((state.lastReplyFingerprint === fingerprint && Date.now() - Number(state.lastReplyAt || 0) < 10000) || state.inFlightFingerprint === fingerprint) {
-        throw new Error('刚刚已经发送过这条内容，请不要重复提交');
+        throw new Error(t('duplicateReply', '刚刚已经发送过这条内容，请不要重复提交'));
       }
       state.inFlightFingerprint = fingerprint;
 
@@ -1890,15 +2584,15 @@
       state.lastReplyAt = Date.now();
       resetComposerState();
       closeReplyPanel();
-      showSuccess('发送成功');
+      showSuccess(t('sendSuccess', '发送成功'));
       refreshAfterReply(created);
     } catch (err) {
       console.warn(err);
-      showError(err && err.message ? err.message : '发送失败');
+      showError(err && err.message ? err.message : t('sendFail', '发送失败'));
     } finally {
       state.inFlightFingerprint = '';
       state.replySending = false;
-      $btn.prop('disabled', false).text('发送');
+      $btn.prop('disabled', false).text(t('send', '发送'));
     }
   }
 
@@ -1909,21 +2603,38 @@
   }
 
   function bindGlobalEvents() {
-    $(window).off('scroll.xTopicProgress resize.xTopicProgress').on('scroll.xTopicProgress resize.xTopicProgress', updatePageProgress);
+    $(window).off('scroll.xTopicProgress resize.xTopicProgress').on('scroll.xTopicProgress resize.xTopicProgress', function () { updatePageProgress(); syncTopicToolPanelVisibility(); });
     $(document).off('keydown.xTopicDetailV12').on('keydown.xTopicDetailV12', function (e) {
       if (e.key === 'Escape') {
         closePagePicker();
         closeTranslateSettingsModal();
         closeLanguagePicker();
-        $('#x-media-lightbox').removeClass('show');
+        closeMediaLightbox();
+      } else if ($('#x-media-lightbox').hasClass('show') && e.key === 'ArrowLeft') {
+        moveMediaLightbox(-1);
+      } else if ($('#x-media-lightbox').hasClass('show') && e.key === 'ArrowRight') {
+        moveMediaLightbox(1);
       }
     });
   }
 
+
+  function cleanupInjectedUi() {
+    if (state.postObserver) { try { state.postObserver.disconnect(); } catch (_) {} state.postObserver = null; }
+    $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input,.x-ai-settings-btn,.x-ai-settings-inline-host').remove();
+    $('body').removeClass('x-media-lightbox-open x-topic-tools-hidden x-topic-scrolled');
+    $(window).off('scroll.xTopicProgress resize.xTopicProgress');
+    $(document).off('keydown.xTopicDetailV12 click.xTopicToolbar');
+    if (state.tiktokObserver) { try { state.tiktokObserver.disconnect(); } catch (_) {} state.tiktokObserver = null; }
+    (state.tiktokPlayers || new Map()).forEach(player => { try { window.clearTimeout(player.timer); } catch (_) {} try { player.iframe && player.iframe.remove(); } catch (_) {} });
+    if (state.tiktokPlayers && typeof state.tiktokPlayers.clear === 'function') state.tiktokPlayers.clear();
+  }
+
   function init() {
-    if (!isTopicPage()) return;
+    if (!isTopicPage()) { cleanupInjectedUi(); return; }
     ensureTopicState();
     injectReplyUI();
+    installTikTokMessageBridge();
     injectTopicToolbar();
     ensureTitleTranslateButton();
     decorateAllPosts();
@@ -1934,6 +2645,7 @@
     bindGlobalEvents();
     autosizeTextarea();
     updatePageProgress();
+    syncTopicToolPanelVisibility();
   }
 
   $(window).off('action:ajaxify.start.xTopicDetailV12').on('action:ajaxify.start.xTopicDetailV12', function () {
@@ -1941,6 +2653,7 @@
     closePagePicker();
     closeTranslateSettingsModal();
     closeLanguagePicker();
+    closeMediaLightbox();
   });
 
   $(window).off('action:ajaxify.end.xTopicDetailV12 action:posts.loaded.xTopicDetailV12 action:posts.edited.xTopicDetailV12 action:topic.loaded.xTopicDetailV12')
