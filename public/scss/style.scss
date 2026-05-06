@@ -249,3 +249,176 @@ body.page-topic .haa9-detail-content .haa9-image img, body.page-topic .haa9-deta
   #x-translate-settings-modal .x-settings-preview-row { flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; } }
+
+
+/* =========================================================
+   Peipe Topic Detail v13.2 fixes
+   - no duplicated flags/status dots
+   - native tool panel scrolls away instead of staying stuck on screen
+   - AI translation settings button restored and visible
+   - compact media sizes + mainstream image grid
+   - TikTok official embeds on topic detail pages
+   ========================================================= */
+body.page-topic .sticky-tools,
+body.page-topic .topic-sidebar-tools,
+body.page-topic .topic-sidebar-tools .thread-tools {
+  position: static !important;
+  top: auto !important;
+  transform: none;
+  transition: opacity .16s ease, transform .16s ease;
+}
+body.page-topic.x-topic-tools-hidden .sticky-tools,
+body.page-topic.x-topic-tools-hidden .topic-sidebar-tools,
+body.page-topic.x-topic-tools-hidden .topic-sidebar-tools .thread-tools,
+body.page-topic.x-topic-tools-hidden .x-ai-settings-inline-host {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-8px) !important;
+}
+body.page-topic .x-ai-settings-inline-host {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  margin: 6px 0 8px !important;
+  transition: opacity .16s ease, transform .16s ease;
+}
+body.page-topic .x-ai-settings-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border: 1px solid rgba(15,23,42,.10) !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.92) !important;
+  color: #111827 !important;
+  font-size: 12.5px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  box-shadow: 0 5px 16px rgba(15,23,42,.08) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+body.page-topic .x-ai-settings-btn i { font-size: 14px !important; color: inherit !important; }
+
+body.page-topic .x-avatar-wrap .x-flag + .x-flag,
+body.page-topic .x-avatar-wrap .x-status-dot + .x-status-dot { display: none !important; }
+body.page-topic .x-profile-link { cursor: pointer; text-decoration: none !important; }
+
+body.page-topic [component="post/content"] img.x-detail-image,
+body.page-topic [component="post/content"] img.img-markdown,
+body.page-topic [component="post/content"] video,
+body.page-topic [component="post/content"] .x-inline-video {
+  max-width: min(100%, 300px) !important;
+  max-height: 280px !important;
+  border-radius: 14px !important;
+  object-fit: cover !important;
+  box-shadow: none !important;
+  border: 0 !important;
+  background: #f1f5f9 !important;
+}
+body.page-topic [component="post/content"] .x-inline-video,
+body.page-topic [component="post/content"] video { background: #000 !important; }
+body.page-topic [component="post/content"] a:has(> img.x-native-grid-source),
+body.page-topic [component="post/content"] .x-native-grid-source { display: none !important; }
+
+body.page-topic .x-media-grid {
+  display: grid !important;
+  gap: 4px !important;
+  width: min(100%, 340px) !important;
+  max-width: 340px !important;
+  margin: 4px 0 6px !important;
+  overflow: hidden !important;
+  border-radius: 15px !important;
+  background: rgba(15,23,42,.06) !important;
+}
+body.page-topic .x-media-grid[data-count="1"] { grid-template-columns: 1fr; }
+body.page-topic .x-media-grid[data-count="2"] { grid-template-columns: repeat(2, minmax(0,1fr)); }
+body.page-topic .x-media-grid[data-count="3"] { grid-template-columns: 2fr 1fr; grid-template-rows: repeat(2, minmax(0,1fr)); height: min(54vw, 240px); max-height: 240px; }
+body.page-topic .x-media-grid[data-count="3"] .x-media-grid-item:first-child { grid-row: 1 / span 2; }
+body.page-topic .x-media-grid[data-count="4"] { grid-template-columns: repeat(2, minmax(0,1fr)); grid-template-rows: repeat(2, minmax(0,1fr)); height: min(60vw, 280px); max-height: 280px; }
+body.page-topic .x-media-grid-item {
+  position: relative !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background: #000 !important;
+  cursor: zoom-in !important;
+}
+body.page-topic .x-media-grid[data-count="1"] .x-media-grid-item { aspect-ratio: 4 / 3; max-height: 260px; }
+body.page-topic .x-media-grid[data-count="2"] .x-media-grid-item { aspect-ratio: 1 / 1; }
+body.page-topic .x-media-grid-item img {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+body.page-topic .x-media-more {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.42);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+body.page-topic .x-tiktok-wrap {
+  width: min(100%, 325px) !important;
+  max-width: 325px !important;
+  margin: 6px 0 8px !important;
+  overflow: hidden !important;
+  border-radius: 16px !important;
+  background: #000 !important;
+}
+body.page-topic .x-tiktok-wrap .tiktok-embed,
+body.page-topic .x-tiktok-wrap iframe {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 325px !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  background: #000 !important;
+}
+body.page-topic .x-tiktok-wrap section { min-height: 80px; }
+body.page-topic .x-tiktok-wrap a { color: #fff !important; }
+
+body.page-topic .haa9-detail-content,
+body.page-topic .haa9-content.haa9-detail-content,
+body.page-topic .haa9-detail-content.x-compact-detail-media {
+  max-width: min(100%, 340px) !important;
+}
+body.page-topic .haa9-detail-content .haa9-image-list,
+body.page-topic .haa9-detail-content .haa9-video-list { max-width: 340px !important; gap: 4px !important; }
+body.page-topic .haa9-detail-content .haa9-image img,
+body.page-topic .haa9-detail-content .haa9-video-shell { max-height: 280px !important; border-radius: 14px !important; }
+
+@media (max-width: 520px) {
+  body.page-topic .x-media-grid,
+  body.page-topic .x-tiktok-wrap,
+  body.page-topic .haa9-detail-content,
+  body.page-topic .haa9-content.haa9-detail-content { width: min(100%, 310px) !important; max-width: 310px !important; }
+  body.page-topic [component="post/content"] img.x-detail-image,
+  body.page-topic [component="post/content"] img.img-markdown,
+  body.page-topic [component="post/content"] video,
+  body.page-topic [component="post/content"] .x-inline-video { max-width: min(100%, 310px) !important; max-height: 240px !important; }
+  body.page-topic .x-media-grid[data-count="3"] { height: min(58vw, 220px); }
+  body.page-topic .x-media-grid[data-count="4"] { height: min(62vw, 250px); }
+  body.page-topic .x-ai-settings-btn span { display: inline !important; }
+}
