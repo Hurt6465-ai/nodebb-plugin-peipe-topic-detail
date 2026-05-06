@@ -1,3 +1,5 @@
+
+```markdown
 # nodebb-plugin-peipe-topic-detail
 
 适用于 Peipe/HAA9 风格移动端主题页面的 NodeBB 4.x 主题详情页插件。
@@ -14,10 +16,27 @@
 - 头像链接指向 `/user/{userslug}/topics`，在线状态圆点与国家/地区标志缓存。
 - 多语言运行时字符串，并适配官方 NodeBB 语言文件：zh-CN、en-GB、my-MM、vi。
 
-## 从 GitHub 安装
+## 从 GitHub 安装（裸机/直接部署）
 
 ```bash
 npm install git+https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail.git
 ./nodebb plugin activate nodebb-plugin-peipe-topic-detail
 ./nodebb build
 ./nodebb restart
+```
+
+Termius 安装方式（Docker 部署）
+
+适用于使用 Docker 运行 NodeBB 并通过 Termius 等 SSH 客户端维护的情况。
+操作会临时暂停容器自动重启，安装构建完成后再恢复。
+
+```bash
+docker update --restart=no nodebb
+
+docker exec -it nodebb sh -lc 'cd /usr/src/app && npm cache clean --force && npm install --legacy-peer-deps --force git+https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail.git && ./nodebb build'
+
+docker restart nodebb
+
+docker update --restart=always nodebb
+```
+
