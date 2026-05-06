@@ -25,7 +25,7 @@ npm install git+https://github.com/Hurt6465-ai/nodebb-plugin-peipe-topic-detail.
 ./nodebb restart
 ```
 
-Termius 安装方式（Docker 部署）
+## Termius 安装方式（Docker 部署）
 
 适用于使用 Docker 运行 NodeBB 并通过 Termius 等 SSH 客户端维护的情况。
 操作会临时暂停容器自动重启，安装构建完成后再恢复。
