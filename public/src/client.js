@@ -1,5 +1,5 @@
 /* =========================================
-   Peipe Topic Detail UI v13.0
+   Peipe Topic Detail UI v13.2
    修复点：
    - 手机端极限紧凑间距 / 清理隐藏媒体占位
    - AI 设置贴原生工具栏，不额外生成“翻译工具”行
@@ -35,7 +35,7 @@
       viewUserTopics: '查看用户主题', viewUserTopicsOf: '查看 {username} 的主题', apiEndpoint: 'AI 接口', model: '模型', apiKey: '密钥', prompt: '提示词',
       promptPlaceholder: '支持 {{sourceLang}} 和 {{targetLang}} 占位符', settingsTip: '点击“原文”或“目标”才会展开语言选择', source: '原文', target: '目标',
       defaultPrompt: '你是专业论坛翻译助手。请把用户提供的内容从 {{sourceLang}} 翻译为 {{targetLang}}。保留原有语气、换行、链接、Markdown、代码块、用户名、表情和列表结构。只输出译文，不要解释。',
-      lightboxExit: '点击底部退出', lightboxCounter: '{current} / {total}'
+      lightboxExit: '点击底部退出', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok 视频加载失败，点此打开原链接'
     },
     'en-GB': {
       user: 'User', translate: 'Translate', translating: 'Translating', original: 'Show original', aiSettings: 'AI translation settings', aiTranslate: 'AI translate',
@@ -53,7 +53,7 @@
       viewUserTopics: 'View user topics', viewUserTopicsOf: "View {username}'s topics", apiEndpoint: 'AI endpoint', model: 'Model', apiKey: 'API key', prompt: 'Prompt',
       promptPlaceholder: 'Supports {{sourceLang}} and {{targetLang}} placeholders', settingsTip: 'Tap source or target to choose language', source: 'Source', target: 'Target',
       defaultPrompt: 'You are a professional forum translation assistant. Translate the user content from {{sourceLang}} to {{targetLang}}. Preserve tone, line breaks, links, Markdown, code blocks, usernames, emojis, and lists. Output only the translation without explanation.',
-      lightboxExit: 'Tap bottom to exit', lightboxCounter: '{current} / {total}'
+      lightboxExit: 'Tap bottom to exit', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok video failed to load. Tap to open the original link'
     },
     'my-MM': {
       user: 'အသုံးပြုသူ', translate: 'ဘာသာပြန်', translating: 'ဘာသာပြန်နေသည်', original: 'မူရင်းကြည့်ရန်', aiSettings: 'AI ဘာသာပြန် ဆက်တင်', aiTranslate: 'AI ဘာသာပြန်',
@@ -71,7 +71,7 @@
       viewUserTopics: 'အသုံးပြုသူ၏ ခေါင်းစဉ်များ', viewUserTopicsOf: '{username} ၏ ခေါင်းစဉ်များ', apiEndpoint: 'AI endpoint', model: 'မော်ဒယ်', apiKey: 'API key', prompt: 'Prompt',
       promptPlaceholder: '{{sourceLang}} နှင့် {{targetLang}} placeholder ကိုထောက်ပံ့သည်', settingsTip: 'မူရင်း သို့မဟုတ် ဦးတည်ကိုနှိပ်၍ ဘာသာစကားရွေးပါ', source: 'မူရင်း', target: 'ဦးတည်',
       defaultPrompt: 'သင်သည် ဖိုရမ်ဘာသာပြန် အကူအညီပေးသူဖြစ်သည်။ အကြောင်းအရာကို {{sourceLang}} မှ {{targetLang}} သို့ ဘာသာပြန်ပါ။ လေသံ၊ စာကြောင်းခွဲ၊ link၊ Markdown၊ code block၊ username၊ emoji နှင့် list များကို ထိန်းသိမ်းပါ။ ဘာသာပြန်စာသားသာ ထုတ်ပါ။',
-      lightboxExit: 'အောက်ခြေကိုနှိပ်ပြီး ထွက်ရန်', lightboxCounter: '{current} / {total}'
+      lightboxExit: 'အောက်ခြေကိုနှိပ်ပြီး ထွက်ရန်', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'TikTok ဗီဒီယို မဖွင့်နိုင်ပါ။ မူရင်းလင့်ခ်ကို ဖွင့်ရန်နှိပ်ပါ'
     },
     vi: {
       user: 'Người dùng', translate: 'Dịch', translating: 'Đang dịch', original: 'Xem bản gốc', aiSettings: 'Cài đặt dịch AI', aiTranslate: 'Dịch AI',
@@ -89,7 +89,7 @@
       viewUserTopics: 'Xem chủ đề của người dùng', viewUserTopicsOf: 'Xem chủ đề của {username}', apiEndpoint: 'AI endpoint', model: 'Mô hình', apiKey: 'API key', prompt: 'Prompt',
       promptPlaceholder: 'Hỗ trợ biến {{sourceLang}} và {{targetLang}}', settingsTip: 'Nhấn nguồn hoặc đích để chọn ngôn ngữ', source: 'Nguồn', target: 'Đích',
       defaultPrompt: 'Bạn là trợ lý dịch diễn đàn chuyên nghiệp. Hãy dịch nội dung từ {{sourceLang}} sang {{targetLang}}. Giữ nguyên giọng điệu, xuống dòng, liên kết, Markdown, khối mã, tên người dùng, emoji và danh sách. Chỉ xuất bản dịch, không giải thích.',
-      lightboxExit: 'Nhấn phía dưới để thoát', lightboxCounter: '{current} / {total}'
+      lightboxExit: 'Nhấn phía dưới để thoát', lightboxCounter: '{current} / {total}', tiktokUnavailable: 'Không tải được video TikTok. Nhấn để mở liên kết gốc'
     }
   };
 
@@ -123,7 +123,7 @@
     return key ? t(key, message) : message;
   }
 
-  const VERSION = '13.0.0';
+  const VERSION = '13.2.0';
   const UI_VERSION_ATTR = 'data-x-topic-detail-version';
 
   const IMAGE_CONFIG = {
@@ -211,6 +211,9 @@
     profileInflight: new Map(),
     lightboxImages: [],
     lightboxIndex: 0,
+    lastScrollY: 0,
+    toolPanelHidden: false,
+    tiktokEmbedScriptLoading: false,
     titleTranslated: false,
     titleOriginal: '',
     titleTranslatedText: '',
@@ -718,36 +721,49 @@
     const $existing = $('.x-ai-settings-btn').first().detach();
     $('.x-topic-toolbar').remove();
     const $btn = $existing.length ? $existing : makeAiSettingsButton();
+    $btn.attr({ type: 'button', 'data-x-topic-tool': 'translate-settings' });
 
     const hostSelectors = [
       '.topic-main-buttons .btn-group',
       'nav.topic-main-buttons .btn-group',
       '.topic-main-buttons',
       'nav.topic-main-buttons',
-      '.sticky-tools .thread-tools',
-      '.topic-sidebar-tools .thread-tools',
       '[component="topic/tools"]',
-      '.thread-tools'
+      '.thread-tools',
+      '.sticky-tools .thread-tools',
+      '.topic-sidebar-tools .thread-tools'
     ];
 
     let $host = $();
     for (const selector of hostSelectors) {
       const $candidate = $(selector).filter(function () {
-        return !$(this).closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker').length;
+        return !$(this).closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker,#x-page-picker').length;
       }).first();
       if ($candidate.length) { $host = $candidate; break; }
     }
 
     if ($host.length) {
-      const $gearIcon = $host.find('.fa-gear,.fa-cog,.fa-cogs').last();
+      const $gearIcon = $host.find('.fa-gear,.fa-cog,.fa-cogs,.fa-sliders').not($btn.find('i')).last();
       const $gearButton = $gearIcon.length ? $gearIcon.closest('a,button,.btn,.dropdown,.btn-group') : $();
-      if ($gearButton.length && $gearButton.parent().length) $gearButton.after($btn);
+      if ($gearButton.length && $gearButton.parent().length && !$gearButton.is($btn)) $gearButton.after($btn);
       else $host.append($btn);
-      return;
+    } else {
+      const $anchor = $('.topic .topic-main-buttons, .topic-info, [component="topic/header"]').first();
+      if (!$('.x-ai-settings-inline-host').length) $anchor.length ? $anchor.after('<div class="x-ai-settings-inline-host"></div>') : $('body').append('<div class="x-ai-settings-inline-host"></div>');
+      $('.x-ai-settings-inline-host').first().append($btn);
     }
 
-    const $anchor = $('.topic .topic-main-buttons, .topic-info, [component="topic/header"]').first();
-    if ($anchor.length) $anchor.after($('<div class="x-ai-settings-inline-host"></div>').append($btn));
+    $btn.removeClass('d-none hidden invisible').css({ display: 'inline-flex' });
+  }
+
+  function syncTopicToolPanelVisibility() {
+    if (!isTopicPage()) return;
+    const y = window.scrollY || window.pageYOffset || 0;
+    const shouldHide = y > 96 && y > Number(state.lastScrollY || 0);
+    state.lastScrollY = y;
+    if (state.toolPanelHidden === shouldHide) return;
+    state.toolPanelHidden = shouldHide;
+    $('body').toggleClass('x-topic-tools-hidden', shouldHide).toggleClass('x-topic-scrolled', y > 72);
   }
 
   function getSignatureText($post) {
@@ -766,10 +782,157 @@
     return /\.(png|jpe?g|gif|webp|avif)(?:[?#].*)?$/i.test(String(href || ''));
   }
 
+  function isTikTokHref(href) {
+    return /(?:^|\.)tiktok\.com\//i.test(String(href || '')) && /\/video\/\d+/i.test(String(href || ''));
+  }
+
+  function getTikTokVideoId(href) {
+    const match = String(href || '').match(/\/video\/(\d+)/i);
+    return match ? match[1] : '';
+  }
+
+  function canonicalTikTokUrl(href) {
+    const raw = String(href || '').replace(/&amp;/g, '&').trim();
+    try {
+      const url = new URL(raw, location.origin);
+      return url.href;
+    } catch (_) {
+      return raw;
+    }
+  }
+
+  function ensureTikTokEmbedScript() {
+    if (document.querySelector('script[src*="tiktok.com/embed.js"]')) {
+      if (window.tiktokEmbed && typeof window.tiktokEmbed.load === 'function') {
+        try { window.tiktokEmbed.load(); } catch (_) {}
+      }
+      return;
+    }
+    if (state.tiktokEmbedScriptLoading) return;
+    state.tiktokEmbedScriptLoading = true;
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://www.tiktok.com/embed.js';
+    script.onload = function () {
+      state.tiktokEmbedScriptLoading = false;
+      if (window.tiktokEmbed && typeof window.tiktokEmbed.load === 'function') {
+        try { window.tiktokEmbed.load(); } catch (_) {}
+      }
+    };
+    script.onerror = function () { state.tiktokEmbedScriptLoading = false; };
+    document.body.appendChild(script);
+  }
+
+  function makeTikTokEmbed(href) {
+    const url = canonicalTikTokUrl(href);
+    const videoId = getTikTokVideoId(url);
+    if (!videoId) return $();
+    const $wrap = $('<div class="x-tiktok-wrap"></div>');
+    const $blockquote = $(`
+      <blockquote class="tiktok-embed x-tiktok-embed" cite="${escapeHtml(url)}" data-video-id="${escapeHtml(videoId)}">
+        <section><a target="_blank" rel="noopener noreferrer" href="${escapeHtml(url)}">${escapeHtml(t('tiktokUnavailable', 'TikTok 视频加载失败，点此打开原链接'))}</a></section>
+      </blockquote>
+    `);
+    $wrap.append($blockquote);
+    return $wrap;
+  }
+
+  function bindTikTokEmbeds($post) {
+    const $content = $post.find('[component="post/content"]').first();
+    if (!$content.length) return;
+
+    $content.find('a[href]').each(function () {
+      const $link = $(this);
+      if ($link.data('x-tiktok-bound') || $link.closest('.x-tiktok-wrap,.tiktok-embed,.haa9-detail-content').length) return;
+      const href = $link.attr('href') || '';
+      if (!isTikTokHref(href)) return;
+      $link.data('x-tiktok-bound', true);
+      const $embed = makeTikTokEmbed(href);
+      if (!$embed.length) return;
+      const $p = $link.closest('p');
+      if ($p.length && $.trim($p.text()).replace(/\s+/g, ' ') === $.trim($link.text()).replace(/\s+/g, ' ')) $p.replaceWith($embed);
+      else $link.replaceWith($embed);
+    });
+
+    $content.find('p,div').contents().filter(function () {
+      return this.nodeType === 3 && /tiktok\.com\//i.test(this.nodeValue || '');
+    }).each(function () {
+      const text = String(this.nodeValue || '');
+      const match = text.match(/https?:\/\/(?:www\.)?tiktok\.com\/[^\s<>'"]+\/video\/\d+[^\s<>'"]*/i);
+      if (!match) return;
+      const $embed = makeTikTokEmbed(match[0]);
+      if (!$embed.length) return;
+      const before = text.slice(0, match.index).trim();
+      const after = text.slice(match.index + match[0].length).trim();
+      const nodes = [];
+      if (before) nodes.push(document.createTextNode(before + ' '));
+      nodes.push($embed[0]);
+      if (after) nodes.push(document.createTextNode(' ' + after));
+      $(this).replaceWith(nodes);
+    });
+
+    if ($content.find('.tiktok-embed').length) ensureTikTokEmbedScript();
+  }
+
+  function mediaParent($node) {
+    const $a = $node.closest('a[href]');
+    if ($a.length && (isImageHref($a.attr('href')) || $a.find('img').length)) return $a;
+    return $node;
+  }
+
+  function buildImageGrid($post) {
+    const $content = $post.find('[component="post/content"]').first();
+    if (!$content.length || $content.data('x-image-grid-built')) return;
+    const $imgs = $content.find('img').filter(function () {
+      const $img = $(this);
+      if ($img.closest('.emoji,.avatar,.x-avatar-wrap,.x-media-grid,.x-tiktok-wrap,.tiktok-embed,.haa9-detail-content').length) return false;
+      if ($img.hasClass('emoji') || $img.hasClass('avatar') || $img.hasClass('x-native-media-hidden')) return false;
+      const src = $img.attr('src') || $img.attr('data-src') || '';
+      return !!src && !/emoji|avatar/i.test(src);
+    });
+    if (!$imgs.length) return;
+
+    const images = [];
+    $imgs.each(function () {
+      const $img = $(this);
+      const src = $img.attr('src') || $img.attr('data-src') || '';
+      const full = $img.closest('a[href]').attr('href') || src;
+      if (src && !images.some(item => item.src === src || item.full === full)) images.push({ src, full });
+    });
+    if (images.length <= 1) {
+      $imgs.addClass('x-detail-image');
+      return;
+    }
+
+    $content.data('x-image-grid-built', true);
+    const show = images.slice(0, 4);
+    const $grid = $(`<div class="x-media-grid" data-count="${Math.min(show.length, 4)}" data-total="${images.length}"></div>`);
+    show.forEach((item, index) => {
+      const more = index === 3 && images.length > 4 ? `<span class="x-media-more">+${images.length - 4}</span>` : '';
+      const $btn = $(`<button type="button" class="x-media-grid-item" data-index="${index}" aria-label="${escapeHtml(t('zoomImage', '放大图片'))}"><img src="${escapeHtml(item.src)}" alt="" loading="lazy" />${more}</button>`);
+      $btn.on('click.xGrid', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMediaLightbox(images.map(x => x.full || x.src), index);
+      });
+      $grid.append($btn);
+    });
+
+    const $first = mediaParent($imgs.first());
+    ($first.closest('p').length ? $first.closest('p') : $first).before($grid);
+    $imgs.each(function () {
+      const $img = $(this);
+      const $holder = mediaParent($img);
+      $holder.addClass('x-native-grid-source').attr('aria-hidden', 'true');
+      const $p = $holder.closest('p');
+      if ($p.length && !$p.clone().find('.x-post-translate,.x-translate-box,script,style').remove().end().text().trim()) $p.addClass('x-native-grid-source');
+    });
+  }
+
   function cleanPostTextForTranslate($content) {
     if (!$content || !$content.length) return '';
     const $clone = $content.clone();
-    $clone.find('.x-translate-box, .x-post-translate, .x-voice-card, audio, video, img, script, style').remove();
+    $clone.find('.x-translate-box, .x-post-translate, .x-voice-card, .x-media-grid, .x-tiktok-wrap, .tiktok-embed, audio, video, img, iframe, script, style').remove();
     $clone.find('a[href]').filter(function () {
       const href = $(this).attr('href') || '';
       return isAudioHref(href) || isVideoHref(href) || isImageHref(href);
@@ -847,13 +1010,20 @@
     if (!$avatarWrap.length) return;
     $avatarWrap.addClass('x-avatar-wrap');
 
+    // Clean duplicates created by older hotfixes or repeated ajaxify init.
+    $avatarWrap.find('.x-status-dot').slice(1).remove();
+    $avatarWrap.find('.x-flag').slice(1).remove();
+
     const profileUrl = getUserTopicsUrl($post);
-    if (profileUrl && !$avatarWrap.find('.x-avatar-link').length) {
+    if (profileUrl) {
       const $avatar = $avatarWrap.find('.avatar,img.avatar').first();
-      if ($avatar.length) {
-        const $link = $(`<a class="x-avatar-link x-profile-link" href="${escapeHtml(profileUrl)}" title="${escapeHtml(t('viewUserTopics', '查看用户主题'))}"></a>`);
+      let $link = $avatarWrap.find('.x-avatar-link').first();
+      if (!$link.length && $avatar.length) {
+        $link = $(`<a class="x-avatar-link x-profile-link" href="${escapeHtml(profileUrl)}" title="${escapeHtml(t('viewUserTopics', '查看用户主题'))}"></a>`);
         $avatar.before($link);
         $link.append($avatar);
+      } else if ($link.length) {
+        $link.attr('href', profileUrl);
       }
     }
 
@@ -862,14 +1032,37 @@
     if ($statusEl.hasClass('online')) statusClass = 'online';
     else if ($statusEl.hasClass('dnd')) statusClass = 'dnd';
     else if ($statusEl.hasClass('away')) statusClass = 'away';
-    if (!$avatarWrap.find('.x-status-dot').length) $avatarWrap.append(`<span class="x-status-dot ${statusClass}"></span>`);
+    let $dot = $avatarWrap.find('.x-status-dot').first();
+    if (!$dot.length) $dot = $('<span class="x-status-dot"></span>').appendTo($avatarWrap);
+    $dot.removeClass('online away dnd offline').addClass(statusClass);
 
     const userSlug = getUserSlug($post);
-    if (!userSlug || $avatarWrap.find('.x-flag').length) return;
+    if (!userSlug) return;
+    if ($avatarWrap.data('x-flag-user') === userSlug && $avatarWrap.find('.x-flag').length) return;
+    if ($avatarWrap.data('x-flag-loading') === userSlug) return;
+    $avatarWrap.data('x-flag-loading', userSlug);
     fetchUserProfileCached(userSlug).then(profile => {
       const flag = flagFromProfile(profile || {});
-      if (flag && !$avatarWrap.find('.x-flag').length) $avatarWrap.append(`<span class="x-flag">${flag}</span>`);
-    }).catch(() => {});
+      $avatarWrap.removeData('x-flag-loading');
+      if (!flag) return;
+      $avatarWrap.data('x-flag-user', userSlug);
+      let $flag = $avatarWrap.find('.x-flag').first();
+      if (!$flag.length) $flag = $('<span class="x-flag"></span>').appendTo($avatarWrap);
+      $flag.text(flag);
+      $avatarWrap.find('.x-flag').slice(1).remove();
+    }).catch(() => { $avatarWrap.removeData('x-flag-loading'); });
+  }
+
+  function bindProfileLinks($post) {
+    const profileUrl = getUserTopicsUrl($post);
+    if (!profileUrl) return;
+    $post.find('a[href*="/user/"]').each(function () {
+      const $link = $(this);
+      if ($link.closest('#x-topic-bottom,#x-translate-settings-modal,#x-lang-picker').length) return;
+      const href = String($link.attr('href') || '');
+      if (!/\/user\//i.test(href)) return;
+      $link.addClass('x-profile-link').attr('href', profileUrl);
+    });
   }
 
   function detectUpvoteState($votesWrap, $upvoteBtn) {
@@ -1197,7 +1390,7 @@
 
   function closeMediaLightbox() {
     $('#x-media-lightbox').removeClass('show');
-    $('body').removeClass('x-media-lightbox-open');
+    $('body').removeClass('x-media-lightbox-open x-topic-tools-hidden x-topic-scrolled');
   }
 
   function moveMediaLightbox(delta) {
@@ -1217,20 +1410,18 @@
   }
 
   function bindMediaLightbox($scope) {
-    ensureMediaLightboxNodes();
-    $scope.find('[component="post/content"]').each(function () {
-      const $content = $(this);
-      const $images = $content.find('img').filter(function () { return !$(this).hasClass('emoji') && !$(this).closest('.avatar,.x-avatar-wrap').length; });
-      const images = $images.map(function () { return $(this).attr('src') || $(this).attr('data-src') || ''; }).get().filter(Boolean);
-      $images.each(function (idx) {
-        const $img = $(this);
-        if ($img.data('x-lightbox-bound')) return;
-        $img.data('x-lightbox-bound', true).css('cursor', 'zoom-in');
-        $img.on('click.xLightbox', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          openMediaLightbox(images.length ? images : [$img.attr('src')], idx);
-        });
+    $scope.find('[component="post/content"] img').each(function () {
+      const $img = $(this);
+      if ($img.closest('.emoji,.avatar,.x-avatar-wrap,.x-media-grid,.x-tiktok-wrap,.tiktok-embed').length) return;
+      if ($img.data('x-lightbox-bound')) return;
+      $img.data('x-lightbox-bound', true).addClass('x-detail-image').css('cursor', 'zoom-in');
+      $img.on('click.xLightbox', function (e) {
+        e.preventDefault();
+        const $content = $img.closest('[component="post/content"]');
+        const images = $content.find('img.x-detail-image').map(function () { return $(this).closest('a[href]').attr('href') || $(this).attr('src'); }).get().filter(Boolean);
+        const src = $img.closest('a[href]').attr('href') || $img.attr('src');
+        const idx = Math.max(0, images.indexOf(src));
+        openMediaLightbox(images.length ? images : [src], idx);
       });
     });
   }
@@ -1238,12 +1429,14 @@
   function bindInlineVideos($post) {
     $post.find('[component="post/content"] a[href]').each(function () {
       const $link = $(this);
-      if ($link.data('x-video-bound')) return;
+      if ($link.data('x-video-bound') || $link.closest('.x-tiktok-wrap,.tiktok-embed').length) return;
       const href = $link.attr('href') || '';
       if (!isVideoHref(href)) return;
       $link.data('x-video-bound', true);
-      const $video = $(`<video controls preload="metadata" playsinline src="${escapeHtml(href)}"></video>`);
-      $link.replaceWith($video);
+      const $video = $(`<video class="x-inline-video" controls preload="metadata" playsinline src="${escapeHtml(href)}"></video>`);
+      const $p = $link.closest('p');
+      if ($p.length && $.trim($p.text()).replace(/\s+/g, ' ') === $.trim($link.text()).replace(/\s+/g, ' ')) $p.empty().append($video);
+      else $link.replaceWith($video);
     });
   }
 
@@ -1359,7 +1552,10 @@
     }
     decorateMeta($post);
     decorateAvatar($post);
+    bindProfileLinks($post);
+    bindTikTokEmbeds($post);
     bindAudioCards($post);
+    buildImageGrid($post);
     bindInlineVideos($post);
     bindMediaLightbox($post);
     bindPostTranslate($post);
@@ -1634,7 +1830,7 @@
   function cleanupOldInjectedUi() {
     const $bottom = $('#x-topic-bottom');
     if ($bottom.length && $bottom.attr(UI_VERSION_ATTR) !== VERSION) {
-      $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input').remove();
+      $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input,.x-ai-settings-btn,.x-ai-settings-inline-host').remove();
     }
   }
 
@@ -2129,7 +2325,7 @@
   }
 
   function bindGlobalEvents() {
-    $(window).off('scroll.xTopicProgress resize.xTopicProgress').on('scroll.xTopicProgress resize.xTopicProgress', updatePageProgress);
+    $(window).off('scroll.xTopicProgress resize.xTopicProgress').on('scroll.xTopicProgress resize.xTopicProgress', function () { updatePageProgress(); syncTopicToolPanelVisibility(); });
     $(document).off('keydown.xTopicDetailV12').on('keydown.xTopicDetailV12', function (e) {
       if (e.key === 'Escape') {
         closePagePicker();
@@ -2147,8 +2343,8 @@
 
   function cleanupInjectedUi() {
     if (state.postObserver) { try { state.postObserver.disconnect(); } catch (_) {} state.postObserver = null; }
-    $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input').remove();
-    $('body').removeClass('x-media-lightbox-open');
+    $('#x-topic-bottom,#x-page-picker-mask,#x-page-picker,#x-media-lightbox,#x-translate-settings-mask,#x-translate-settings-modal,#x-lang-picker-mask,#x-lang-picker,#x-hidden-file-input,.x-ai-settings-btn,.x-ai-settings-inline-host').remove();
+    $('body').removeClass('x-media-lightbox-open x-topic-tools-hidden x-topic-scrolled');
     $(window).off('scroll.xTopicProgress resize.xTopicProgress');
     $(document).off('keydown.xTopicDetailV12 click.xTopicToolbar');
   }
@@ -2167,6 +2363,7 @@
     bindGlobalEvents();
     autosizeTextarea();
     updatePageProgress();
+    syncTopicToolPanelVisibility();
   }
 
   $(window).off('action:ajaxify.start.xTopicDetailV12').on('action:ajaxify.start.xTopicDetailV12', function () {
