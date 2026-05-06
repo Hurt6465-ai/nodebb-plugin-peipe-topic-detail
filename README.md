@@ -1,5 +1,5 @@
 
-```markdown
+markdown
 # nodebb-plugin-peipe-topic-detail
 
 适用于 Peipe/HAA9 风格移动端主题页面的 NodeBB 4.x 主题详情页插件。
